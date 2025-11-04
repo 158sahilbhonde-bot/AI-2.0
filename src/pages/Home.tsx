@@ -49,90 +49,38 @@ const Home = () => {
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <ConfidentialBanner />
       <Navigation />
-      
-      {/* Visible Banner Text */}
-      <div className="bg-primary/10 border-y border-primary/20 py-4 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-lg font-semibold text-foreground">
-            <strong>Note:</strong> Confidential and Private Property of MS International and Shah Happiness Foundation
-          </p>
-        </div>
-      </div>
  
-      {/* Hero Section */}
-      <section className="relative pt-48 pb-20 lg:pt-56 lg:pb-32 overflow-visible">
-        <div
-          className="absolute inset-0 opacity-10 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroBg})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/90 to-background" />
-        
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="inline-block animate-fade-in">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                <Heart className="h-4 w-4" />
-                {t('hero.advancedHealthcare')}
-              </span>
-            </div>
-            
-            <h1
-              className={`${i18n.language !== 'en' ? 'text-3xl md:text-4xl lg:text-5xl' : 'text-4xl md:text-5xl lg:text-7xl'} px-4 md:px-6 lg:px-8 py-2 md:py-3 lg:py-4 font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-fade-in leading-[1.25] md:leading-[1.25] lg:leading-[1.35]`}
-            >
-              {t('hero.title')}
-            </h1>
-            
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in">
-              {t('hero.subtitle')}
+      {/* Confidential Notice */}
+  <div className="pt-20 pb-4">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="bg-primary border-l-4 border-accent p-4 rounded-r-lg">
+            <p className="text-sm md:text-base font-semibold text-white">
+              Note: Confidential and Private Property of MS International and Shah Happiness Foundation.
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
-              <a href="tel:+18665204146">
-                <Button variant="hero" size="xl" className="rounded-full group">
-                  <Phone className="mr-2 h-5 w-5" />
-                  {t('hero.call247')}
-                </Button>
-              </a>
-              <Link to="/about">
-                <Button variant="outline" size="xl" className="rounded-full">
-                  {t('hero.learnMore')}
-                </Button>
-              </Link>
-            </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Agent Selection Section */}
       <AgentSelector />
 
       {/* Features Section */}
-      <section className="py-20 lg:py-32 bg-gradient-to-br from-secondary/20 to-background">
+      <section className="py-12 lg:py-20 bg-gradient-to-br from-secondary/20 to-background">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className={`${i18n.language !== 'en' ? 'text-2xl md:text-3xl lg:text-4xl' : 'text-3xl lg:text-5xl'} font-bold mb-4 px-2 md:px-4 py-2 md:py-3 lg:py-4 leading-[1.35] md:leading-[1.45] lg:leading-[1.5] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}
-            >
-              {t('features.title')}
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('features.subtitle')}
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <Card
                   key={index}
-                  className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50 bg-gradient-to-br from-card to-card/50"
+                  className="p-4 md:p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50 bg-gradient-to-br from-card to-card/50"
                 >
-                  <div className="bg-gradient-to-br from-primary to-accent p-3 rounded-xl w-fit mb-4 shadow-md">
-                    <Icon className="h-6 w-6 text-white" />
+                  <div className="bg-gradient-to-br from-primary to-accent p-2 md:p-3 rounded-xl w-fit mb-3 md:mb-4 shadow-md">
+                    <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
+                  <h3 className="text-lg md:text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-sm md:text-base text-muted-foreground">{feature.description}</p>
                 </Card>
               );
             })}
@@ -141,14 +89,14 @@ const Home = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 lg:py-32 bg-gradient-to-br from-primary/5 to-accent/5">
+      <section className="py-12 lg:py-20 bg-gradient-to-br from-primary/5 to-accent/5">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <h2 className="text-3xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div className="space-y-4 md:space-y-6">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 {t('benefits.title')}
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-base md:text-lg text-muted-foreground">
                 {t('benefits.subtitle')}
               </p>
               <ul className="space-y-4">
@@ -189,15 +137,15 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 lg:py-32">
+      <section className="py-12 lg:py-20">
         <div className="container mx-auto px-4 lg:px-8">
           <Card className="relative overflow-hidden shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent opacity-90" />
-            <div className="relative z-10 p-12 lg:p-20 text-center text-white">
-              <h2 className="text-3xl lg:text-5xl font-bold mb-6">
+            <div className="relative z-10 p-8 md:p-12 lg:p-16 text-center text-white">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6">
                 {t('cta.title')}
               </h2>
-              <p className="text-lg lg:text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+              <p className="text-base md:text-lg lg:text-xl mb-6 md:mb-8 opacity-90 max-w-2xl mx-auto">
                 {t('cta.subtitle')}
               </p>
               <a href="tel:+18665204146">

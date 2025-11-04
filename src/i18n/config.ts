@@ -12,18 +12,18 @@ const resources = {
       hero: {
         title: "Your Health, Our Priority",
         subtitle: "Experience healthcare reimagined with AI-powered virtual consultations",
-        selectAgent: "Select Your Virtual Doctor",
-        availableAgents: "Available Virtual Doctors",
+        selectAgent: "Select Your Virtual Assistant",
+        availableAgents: "Available Virtual Assistants",
         advancedHealthcare: "Advanced Virtual Healthcare",
         learnMore: "Learn More",
-        call247: "Call 24/7 Medical Assistant"
+        call247: "Call 24/7: +1 (866) 520-4146"
       },
       agents: {
-        hindi: "Hindi Doctor",
-        english: "English Doctor",
+        hindi: "Hindi Assistant",
+        english: "English Assistant",
         selectLanguage: "Choose your preferred language",
-        selectHindi: "Select Hindi Doctor",
-        selectEnglish: "Select English Doctor"
+        selectHindi: "Select Hindi Assistant",
+        selectEnglish: "Select English Assistant"
       },
       features: {
         title: "Why Choose AIHealthHappiness?",
@@ -31,7 +31,7 @@ const resources = {
         availability: "24/7 Availability",
         availabilityDesc: "Access healthcare support anytime, day or night",
         aiPowered: "AI-Powered Consultations",
-        aiPoweredDesc: "Advanced virtual doctor technology for accurate guidance",
+        aiPoweredDesc: "Advanced virtual assistant technology for accurate guidance",
         secure: "Secure & Private",
         secureDesc: "Your health information is protected and confidential",
         personalized: "Personalized Care",
@@ -39,7 +39,7 @@ const resources = {
       },
       benefits: {
         title: "Comprehensive Healthcare Support",
-        subtitle: "Our virtual doctor provides a wide range of healthcare services to support your wellbeing and help you make informed health decisions.",
+        subtitle: "Our virtual assistant provides a wide range of healthcare services to support your wellbeing and help you make informed health decisions.",
         getStarted: "Get Started Now",
         instant: "Instant medical advice and symptom assessment",
         medication: "Medication information and reminders",
@@ -59,7 +59,7 @@ const resources = {
         quickLinks: "Quick Links",
         contact: "Contact",
         availability: "Availability",
-        available247: "Our Virtual Doctor is available 24/7",
+        available247: "Our Virtual Assistant is available 24/7",
         instantResponse: "Instant response, anytime, anywhere",
         email: "support@aihealthhappiness.com",
         phone: "1-800-HEALTH-AI",
@@ -91,7 +91,7 @@ const resources = {
         stat4: "50+",
         stat4Label: "Languages",
         techTitle: "Powered by Advanced AI",
-        techDesc: "Our virtual doctor utilizes state-of-the-art artificial intelligence technology trained on vast medical databases and updated continuously with the latest healthcare information. We prioritize accuracy, privacy, and user experience to deliver healthcare guidance you can trust.",
+        techDesc: "Our virtual assistant utilizes state-of-the-art artificial intelligence technology trained on vast medical databases and updated continuously with the latest healthcare information. We prioritize accuracy, privacy, and user experience to deliver healthcare guidance you can trust.",
         techQuote: "AIHealthHappiness represents the future of accessible healthcare. By combining cutting-edge technology with a human-centered approach, we're making quality health guidance available to everyone, everywhere."
       },
       services: {
@@ -138,7 +138,7 @@ const resources = {
         feature4Title: "Family Care",
         feature4Desc: "Get guidance for your entire family's health needs",
         noticeTitle: "Important Notice",
-        noticeText1: "Our virtual doctor service is designed to provide health information and preliminary guidance. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified healthcare providers with questions you may have regarding medical conditions or treatments.",
+        noticeText1: "Our virtual assistant service is designed to provide health information and preliminary guidance. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified healthcare providers with questions you may have regarding medical conditions or treatments.",
         noticeText2: "In case of a medical emergency, please call your local emergency services immediately."
       }
     }
@@ -153,18 +153,18 @@ const resources = {
       hero: {
         title: "आपका स्वास्थ्य, हमारी प्राथमिकता",
         subtitle: "एआई-संचालित वर्चुअल परामर्श के साथ स्वास्थ्य सेवा का अनुभव करें",
-        selectAgent: "अपना वर्चुअल डॉक्टर चुनें",
-        availableAgents: "उपलब्ध वर्चुअल डॉक्टर",
+        selectAgent: "अपना वर्चुअल सहायक चुनें",
+        availableAgents: "उपलब्ध वर्चुअल सहायक",
         advancedHealthcare: "उन्नत वर्चुअल स्वास्थ्य सेवा",
         learnMore: "और जानें",
-        call247: "24/7 चिकित्सा सहायक को कॉल करें"
+        call247: "24/7 कॉल करें: +1 (866) 520-4146"
       },
       agents: {
-        hindi: "हिंदी डॉक्टर",
-        english: "अंग्रेजी डॉक्टर",
+        hindi: "हिंदी सहायक",
+        english: "अंग्रेजी सहायक",
         selectLanguage: "अपनी पसंदीदा भाषा चुनें",
-        selectHindi: "हिंदी डॉक्टर चुनें",
-        selectEnglish: "अंग्रेजी डॉक्टर चुनें"
+        selectHindi: "हिंदी सहायक चुनें",
+        selectEnglish: "अंग्रेजी सहायक चुनें"
       },
       features: {
         title: "AIHealthHappiness क्यों चुनें?",
@@ -172,7 +172,7 @@ const resources = {
         availability: "24/7 उपलब्धता",
         availabilityDesc: "दिन या रात किसी भी समय स्वास्थ्य सहायता प्राप्त करें",
         aiPowered: "एआई-संचालित परामर्श",
-        aiPoweredDesc: "सटीक मार्गदर्शन के लिए उन्नत वर्चुअल डॉक्टर तकनीक",
+        aiPoweredDesc: "सटीक मार्गदर्शन के लिए उन्नत वर्चुअल सहायक तकनीक",
         secure: "सुरक्षित और निजी",
         secureDesc: "आपकी स्वास्थ्य जानकारी सुरक्षित और गोपनीय है",
         personalized: "व्यक्तिगत देखभाल",
@@ -180,7 +180,7 @@ const resources = {
       },
       benefits: {
         title: "व्यापक स्वास्थ्य सहायता",
-        subtitle: "हमारा वर्चुअल डॉक्टर आपकी भलाई का समर्थन करने और सूचित स्वास्थ्य निर्णय लेने में मदद करने के लिए स्वास्थ्य सेवाओं की एक विस्तृत श्रृंखला प्रदान करता है।",
+        subtitle: "हमारा वर्चुअल सहायक आपकी भलाई का समर्थन करने और सूचित स्वास्थ्य निर्णय लेने में मदद करने के लिए स्वास्थ्य सेवाओं की एक विस्तृत श्रृंखला प्रदान करता है।",
         getStarted: "अभी शुरू करें",
         instant: "तत्काल चिकित्सा सलाह और लक्षण मूल्यांकन",
         medication: "दवा की जानकारी और अनुस्मारक",
@@ -200,7 +200,7 @@ const resources = {
         quickLinks: "त्वरित लिंक",
         contact: "संपर्क",
         availability: "उपलब्धता",
-        available247: "हमारा वर्चुअल डॉक्टर 24/7 उपलब्ध है",
+        available247: "हमारा वर्चुअल सहायक 24/7 उपलब्ध है",
         instantResponse: "तत्काल प्रतिक्रिया, कभी भी, कहीं भी",
         email: "support@aihealthhappiness.com",
         phone: "1-800-HEALTH-AI",
@@ -232,7 +232,7 @@ const resources = {
         stat4: "50+",
         stat4Label: "भाषाएं",
         techTitle: "उन्नत एआई द्वारा संचालित",
-        techDesc: "हमारा वर्चुअल डॉक्टर विशाल चिकित्सा डेटाबेस पर प्रशिक्षित अत्याधुनिक कृत्रिम बुद्धिमत्ता तकनीक का उपयोग करता है और नवीनतम स्वास्थ्य सेवा जानकारी के साथ लगातार अपडेट किया जाता है। हम सटीकता, गोपनीयता और उपयोगकर्ता अनुभव को प्राथमिकता देते हैं ताकि स्वास्थ्य सेवा मार्गदर्शन प्रदान किया जा सके जिस पर आप भरोसा कर सकें।",
+        techDesc: "हमारा वर्चुअल सहायक विशाल चिकित्सा डेटाबेस पर प्रशिक्षित अत्याधुनिक कृत्रिम बुद्धिमत्ता तकनीक का उपयोग करता है और नवीनतम स्वास्थ्य सेवा जानकारी के साथ लगातार अपडेट किया जाता है। हम सटीकता, गोपनीयता और उपयोगकर्ता अनुभव को प्राथमिकता देते हैं ताकि स्वास्थ्य सेवा मार्गदर्शन प्रदान किया जा सके जिस पर आप भरोसा कर सकें।",
         techQuote: "AIHealthHappiness सुलभ स्वास्थ्य सेवा के भविष्य का प्रतिनिधित्व करता है। अत्याधुनिक तकनीक को मानव-केंद्रित दृष्टिकोण के साथ जोड़कर, हम हर जगह, सभी के लिए गुणवत्तापूर्ण स्वास्थ्य मार्गदर्शन उपलब्ध करा रहे हैं।"
       },
       services: {
@@ -294,18 +294,18 @@ const resources = {
       hero: {
         title: "तुमचे आरोग्य, आमची प्राथमिकता",
         subtitle: "एआय-चालित व्हर्च्युअल सल्लामसलत सोबत आरोग्य सेवा अनुभवा",
-        selectAgent: "तुमचा व्हर्च्युअल डॉक्टर निवडा",
-        availableAgents: "उपलब्ध व्हर्च्युअल डॉक्टर",
+        selectAgent: "तुमचा व्हर्च्युअल सहाय्यक निवडा",
+        availableAgents: "उपलब्ध व्हर्च्युअल सहाय्यक",
         advancedHealthcare: "प्रगत व्हर्च्युअल आरोग्य सेवा",
         learnMore: "अधिक जाणून घ्या",
-        call247: "24/7 वैद्यकीय सहाय्यक कॉल करा"
+        call247: "24/7 कॉल करा: +1 (866) 520-4146"
       },
       agents: {
-        hindi: "हिंदी डॉक्टर",
-        english: "इंग्रजी डॉक्टर",
+        hindi: "हिंदी सहाय्यक",
+        english: "इंग्रजी सहाय्यक",
         selectLanguage: "तुमची पसंतीची भाषा निवडा",
-        selectHindi: "हिंदी डॉक्टर निवडा",
-        selectEnglish: "इंग्रजी डॉक्टर निवडा"
+        selectHindi: "हिंदी सहाय्यक निवडा",
+        selectEnglish: "इंग्रजी सहाय्यक निवडा"
       },
       features: {
         title: "AIHealthHappiness का निवडावे?",
@@ -313,7 +313,7 @@ const resources = {
         availability: "24/7 उपलब्धता",
         availabilityDesc: "दिवस किंवा रात्र कधीही आरोग्य सहाय्य मिळवा",
         aiPowered: "एआय-चालित सल्लामसलत",
-        aiPoweredDesc: "अचूक मार्गदर्शनासाठी प्रगत व्हर्च्युअल डॉक्टर तंत्रज्ञान",
+        aiPoweredDesc: "अचूक मार्गदर्शनासाठी प्रगत व्हर्च्युअल सहाय्यक तंत्रज्ञान",
         secure: "सुरक्षित आणि खाजगी",
         secureDesc: "तुमची आरोग्य माहिती संरक्षित आणि गोपनीय आहे",
         personalized: "वैयक्तिक काळजी",
@@ -321,7 +321,7 @@ const resources = {
       },
       benefits: {
         title: "सर्वसमावेशक आरोग्य सहाय्य",
-        subtitle: "आमचा व्हर्च्युअल डॉक्टर तुमच्या कल्याणाचे समर्थन करण्यासाठी आणि माहितीपूर्ण आरोग्य निर्णय घेण्यास मदत करण्यासाठी आरोग्य सेवांची विस्तृत श्रेणी प्रदान करतो.",
+        subtitle: "आमचा व्हर्च्युअल सहाय्यक तुमच्या कल्याणाचे समर्थन करण्यासाठी आणि माहितीपूर्ण आरोग्य निर्णय घेण्यास मदत करण्यासाठी आरोग्य सेवांची विस्तृत श्रेणी प्रदान करतो.",
         getStarted: "आता सुरू करा",
         instant: "त्वरित वैद्यकीय सल्ला आणि लक्षण मूल्यांकन",
         medication: "औषध माहिती आणि स्मरणपत्रे",
@@ -341,7 +341,7 @@ const resources = {
         quickLinks: "त्वरित दुवे",
         contact: "संपर्क",
         availability: "उपलब्धता",
-        available247: "आमचा व्हर्च्युअल डॉक्टर 24/7 उपलब्ध आहे",
+        available247: "आमचा व्हर्च्युअल सहाय्यक 24/7 उपलब्ध आहे",
         instantResponse: "त्वरित प्रतिसाद, कधीही, कुठेही",
         email: "support@aihealthhappiness.com",
         phone: "1-800-HEALTH-AI",
@@ -435,18 +435,18 @@ const resources = {
       hero: {
         title: "તમારું સ્વાસ્થ્ય, અમારી પ્રાથમિકતા",
         subtitle: "AI-સંચાલિત વર્ચ્યુઅલ પરામર્શ સાથે આરોગ્યસંભાળનો અનુભવ કરો",
-        selectAgent: "તમારા વર્ચ્યુઅલ ડૉક્ટરને પસંદ કરો",
-        availableAgents: "ઉપલબ્ધ વર્ચ્યુઅલ ડૉક્ટર",
+        selectAgent: "તમારા વર્ચ્યુઅલ સહાયકને પસંદ કરો",
+        availableAgents: "ઉપલબ્ધ વર્ચ્યુઅલ સહાયક",
         advancedHealthcare: "અદ્યતન વર્ચ્યુઅલ આરોગ્ય સંભાળ",
         learnMore: "વધુ જાણો",
-        call247: "24/7 તબીબી સહાયકને કૉલ કરો"
+        call247: "24/7 કૉલ કરો: +1 (866) 520-4146"
       },
       agents: {
-        hindi: "હિન્દી ડૉક્ટર",
-        english: "અંગ્રેજી ડૉક્ટર",
+        hindi: "હિન્દી સહાયક",
+        english: "અંગ્રેજી સહાયક",
         selectLanguage: "તમારી પસંદગીની ભાષા પસંદ કરો",
-        selectHindi: "હિન્દી ડૉક્ટર પસંદ કરો",
-        selectEnglish: "અંગ્રેજી ડૉક્ટર પસંદ કરો"
+        selectHindi: "હિન્દી સહાયક પસંદ કરો",
+        selectEnglish: "અંગ્રેજી સહાયક પસંદ કરો"
       },
       features: {
         title: "શા માટે AIHealthHappiness પસંદ કરવું?",
@@ -454,7 +454,7 @@ const resources = {
         availability: "24/7 ઉપલબ્ધતા",
         availabilityDesc: "દિવસ અથવા રાત્રે કોઈપણ સમયે આરોગ્ય સહાય મેળવો",
         aiPowered: "AI-સંચાલિત પરામર્શ",
-        aiPoweredDesc: "ચોક્કસ માર્ગદર્શન માટે અદ્યતન વર્ચ્યુઅલ ડૉક્ટર ટેકનોલોજી",
+        aiPoweredDesc: "ચોક્કસ માર્ગદર્શન માટે અદ્યતન વર્ચ્યુઅલ સહાયક ટેકનોલોજી",
         secure: "સુરક્ષિત અને ખાનગી",
         secureDesc: "તમારી આરોગ્ય માહિતી સુરક્ષિત અને ગોપનીય છે",
         personalized: "વ્યક્તિગત સંભાળ",
@@ -462,7 +462,7 @@ const resources = {
       },
       benefits: {
         title: "વ્યાપક આરોગ્ય સહાય",
-        subtitle: "અમારો વર્ચ્યુઅલ ડૉક્ટર તમારી તંદુરસ્તીને સમર્થન આપવા અને માહિતીપૂર્ણ આરોગ્ય નિર્ણયો લેવામાં મદદ કરવા માટે આરોગ્ય સેવાઓની વિશાળ શ્રેણી પ્રદાન કરે છે.",
+        subtitle: "અમારો વર્ચ્યુઅલ સહાયક તમારી તંદુરસ્તીને સમર્થન આપવા અને માહિતીપૂર્ણ આરોગ્ય નિર્ણયો લેવામાં મદદ કરવા માટે આરોગ્ય સેવાઓની વિશાળ શ્રેણી પ્રદાન કરે છે.",
         getStarted: "હવે શરૂ કરો",
         instant: "તાત્કાલિક તબીબી સલાહ અને લક્ષણ મૂલ્યાંકન",
         medication: "દવા માહિતી અને રીમાઇન્ડર્સ",
@@ -482,7 +482,7 @@ const resources = {
         quickLinks: "ઝડપી લિંક્સ",
         contact: "સંપર્ક",
         availability: "ઉપલબ્ધતા",
-        available247: "અમારો વર્ચ્યુઅલ ડૉક્ટર 24/7 ઉપલબ્ધ છે",
+        available247: "અમારો વર્ચ્યુઅલ સહાયક 24/7 ઉપલબ્ધ છે",
         instantResponse: "તાત્કાલિક પ્રતિસાદ, કોઈપણ સમયે, ગમે ત્યાં",
         email: "support@aihealthhappiness.com",
         phone: "1-800-HEALTH-AI",

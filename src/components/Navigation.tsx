@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, Menu, X } from "lucide-react";
+import { Heart, Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -48,6 +48,12 @@ const Navigation = () => {
                 </Button>
               </Link>
             ))}
+            <a href="tel:+18665204146">
+              <Button variant="default" className="ml-2">
+                <Phone className="mr-2 h-4 w-4" />
+                {t('hero.call247')}
+              </Button>
+            </a>
             <LanguageSelector />
           </div>
 
@@ -85,6 +91,12 @@ const Navigation = () => {
                 </Button>
               </Link>
             ))}
+            <a href="tel:+18665204146" className="block">
+              <Button variant="default" className="w-full">
+                <Phone className="mr-2 h-4 w-4" />
+                {t('hero.call247')}
+              </Button>
+            </a>
             <div className="pt-2">
               <LanguageSelector />
             </div>

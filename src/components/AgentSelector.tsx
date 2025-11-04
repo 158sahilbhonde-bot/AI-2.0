@@ -29,38 +29,38 @@ const AgentSelector = () => {
         
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <Card 
-            className="overflow-hidden cursor-pointer hover:shadow-xl transition-shadow group"
+            className="overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group"
             onClick={() => handleAgentSelect('Hindi')}
           >
-            <div className="aspect-[3/4] overflow-hidden">
+            <div className="aspect-square overflow-hidden">
               <img 
                 src={hindiAgentImg} 
-                alt="Hindi Virtual Doctor" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                alt="Hindi Virtual Assistant" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
             </div>
-            <div className="p-6 text-center bg-gradient-to-r from-primary to-accent">
-              <h3 className="text-xl font-bold text-white mb-2">{t('agents.hindi')}</h3>
-              <Button variant="secondary" className="w-full">
+            <div className="p-4 md:p-6 text-center bg-gradient-to-r from-primary to-accent">
+              <h3 className="text-lg md:text-xl font-bold text-white mb-2">{t('agents.hindi')}</h3>
+              <Button variant="secondary" className="w-full text-sm md:text-base">
                 {t('agents.selectHindi')}
               </Button>
             </div>
           </Card>
 
           <Card 
-            className="overflow-hidden cursor-pointer hover:shadow-xl transition-shadow group"
+            className="overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group"
             onClick={() => handleAgentSelect('English')}
           >
-            <div className="aspect-[3/4] overflow-hidden">
+            <div className="aspect-square overflow-hidden">
               <img 
                 src={englishAgentImg} 
-                alt="English Virtual Doctor" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                alt="English Virtual Assistant" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
             </div>
-            <div className="p-6 text-center bg-gradient-to-r from-primary to-accent">
-              <h3 className="text-xl font-bold text-white mb-2">{t('agents.english')}</h3>
-              <Button variant="secondary" className="w-full">
+            <div className="p-4 md:p-6 text-center bg-gradient-to-r from-primary to-accent">
+              <h3 className="text-lg md:text-xl font-bold text-white mb-2">{t('agents.english')}</h3>
+              <Button variant="secondary" className="w-full text-sm md:text-base">
                 {t('agents.selectEnglish')}
               </Button>
             </div>
