@@ -5,6 +5,7 @@ import { Heart, Clock, Shield, Video, CheckCircle, ArrowRight, Phone } from "luc
 import Navigation from "@/components/Navigation";
 import ConfidentialBanner from "@/components/ConfidentialBanner";
 import AgentSelector from "@/components/AgentSelector";
+import DisclaimerDialog from "@/components/DisclaimerDialog";
 import { useTranslation } from "react-i18next";
 import { useGeoLocation } from "@/hooks/useGeoLocation";
 import heroBg from "@/assets/hero-bg.jpg";
@@ -47,6 +48,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <DisclaimerDialog />
       <ConfidentialBanner />
       <Navigation />
  

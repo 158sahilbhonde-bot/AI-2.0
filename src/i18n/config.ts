@@ -140,6 +140,26 @@ const resources = {
         noticeTitle: "Important Notice",
         noticeText1: "Our virtual assistant service is designed to provide health information and preliminary guidance. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified healthcare providers with questions you may have regarding medical conditions or treatments.",
         noticeText2: "In case of a medical emergency, please call your local emergency services immediately."
+      },
+      disclaimer: {
+        welcome: "Welcome to AI Health & Happiness",
+        subtitle: "Free health information and support for everyone, powered by AI medical assistants.",
+        availableLanguage: "Available in Your Language",
+        availableLanguageDesc: "Choose from multiple Indian languages for comfortable communication",
+        freeAccessible: "Free & Accessible",
+        freeAccessibleDesc: "No cost, no registration required - health support for everyone",
+        aiPowered: "AI-Powered Guidance",
+        aiPoweredDesc: "Get instant health information and know when to seek professional care",
+        importantDisclaimers: "Important Disclaimers",
+        disclaimer1: "This service provides health information only",
+        disclaimer2: "Always seek professional medical care for serious conditions",
+        disclaimer3: "AI can make mistakes - verify information before acting",
+        disclaimer4: "In emergencies, call your local emergency number",
+        disclaimer5: "Do not start new medications without consulting a healthcare provider",
+        propertyNotice: "This website and all its content are the exclusive property of Shah Happiness Foundation and its partners. Please note that this website is currently in its early development phase and is not intended for public or mass release. By proceeding, you agree not to share your login credentials or grant access to anyone who is not authorized to view this page without prior approval from Shah Happiness Foundation. Your feedback is greatly appreciated as we continue to enhance the user interface and experience in the coming days.",
+        checkboxText: "I understand that this is for information only and not a replacement for professional medical care. I will verify AI-generated information before making health decisions.",
+        acceptButton: "I Understand - Get Started",
+        acceptTerms: "By clicking \"Accept,\" you acknowledge that you have read and understood this disclaimer and agree to abide by these terms."
       }
     }
   },
@@ -281,6 +301,26 @@ const resources = {
         noticeTitle: "महत्वपूर्ण सूचना",
         noticeText1: "हमारी वर्चुअल डॉक्टर सेवा स्वास्थ्य जानकारी और प्रारंभिक मार्गदर्शन प्रदान करने के लिए डिज़ाइन की गई है। यह पेशेवर चिकित्सा सलाह, निदान या उपचार का विकल्प नहीं है। चिकित्सा स्थितियों या उपचारों के बारे में प्रश्नों के लिए हमेशा योग्य स्वास्थ्य सेवा प्रदाताओं की सलाह लें।",
         noticeText2: "चिकित्सा आपातकाल की स्थिति में, कृपया तुरंत अपनी स्थानीय आपातकालीन सेवाओं को कॉल करें।"
+      },
+      disclaimer: {
+        welcome: "AI स्वास्थ्य और खुशहाली में आपका स्वागत है",
+        subtitle: "AI चिकित्सा सहायकों द्वारा संचालित सभी के लिए मुफ्त स्वास्थ्य जानकारी और सहायता।",
+        availableLanguage: "आपकी भाषा में उपलब्ध",
+        availableLanguageDesc: "आरामदायक संचार के लिए कई भारतीय भाषाओं में से चुनें",
+        freeAccessible: "मुफ्त और सुलभ",
+        freeAccessibleDesc: "कोई लागत नहीं, कोई पंजीकरण आवश्यक नहीं - सभी के लिए स्वास्थ्य सहायता",
+        aiPowered: "AI-संचालित मार्गदर्शन",
+        aiPoweredDesc: "तत्काल स्वास्थ्य जानकारी प्राप्त करें और जानें कि पेशेवर देखभाल कब लेनी है",
+        importantDisclaimers: "महत्वपूर्ण अस्वीकरण",
+        disclaimer1: "यह सेवा केवल स्वास्थ्य जानकारी प्रदान करती है",
+        disclaimer2: "गंभीर स्थितियों के लिए हमेशा पेशेवर चिकित्सा देखभाल लें",
+        disclaimer3: "AI गलतियाँ कर सकता है - कार्य करने से पहले जानकारी सत्यापित करें",
+        disclaimer4: "आपातकाल में, अपने स्थानीय आपातकालीन नंबर पर कॉल करें",
+        disclaimer5: "स्वास्थ्य सेवा प्रदाता से परामर्श किए बिना नई दवाएं शुरू न करें",
+        propertyNotice: "यह वेबसाइट और इसकी सभी सामग्री शाह हैप्पीनेस फाउंडेशन और इसके भागीदारों की विशेष संपत्ति है। कृपया ध्यान दें कि यह वेबसाइट वर्तमान में अपने प्रारंभिक विकास चरण में है और सार्वजनिक या बड़े पैमाने पर रिलीज के लिए अभिप्रेत नहीं है। आगे बढ़कर, आप शाह हैप्पीनेस फाउंडेशन से पूर्व अनुमोदन के बिना किसी भी अनधिकृत व्यक्ति को अपने लॉगिन क्रेडेंशियल साझा न करने या पहुंच न देने के लिए सहमत हैं। आने वाले दिनों में उपयोगकर्ता इंटरफेस और अनुभव को बढ़ाने के लिए आपकी प्रतिक्रिया की सराहना की जाती है।",
+        checkboxText: "मैं समझता हूं कि यह केवल जानकारी के लिए है और पेशेवर चिकित्सा देखभाल का प्रतिस्थापन नहीं है। मैं स्वास्थ्य निर्णय लेने से पहले AI-जनित जानकारी सत्यापित करूंगा।",
+        acceptButton: "मैं समझता हूं - शुरू करें",
+        acceptTerms: "\"स्वीकार करें\" पर क्लिक करके, आप स्वीकार करते हैं कि आपने इस अस्वीकरण को पढ़ और समझ लिया है और इन शर्तों का पालन करने के लिए सहमत हैं।"
       }
     }
   },
@@ -422,6 +462,26 @@ const resources = {
         noticeTitle: "महत्त्वाची सूचना",
         noticeText1: "आमची व्हर्च्युअल डॉक्टर सेवा आरोग्य माहिती आणि प्राथमिक मार्गदर्शन प्रदान करण्यासाठी डिझाइन केली आहे. ही व्यावसायिक वैद्यकीय सल्ला, निदान किंवा उपचाराचा पर्याय नाही. वैद्यकीय परिस्थिती किंवा उपचारांविषयी तुमच्या प्रश्नांसाठी नेहमी पात्र आरोग्य सेवा प्रदात्यांचा सल्ला घ्या.",
         noticeText2: "वैद्यकीय आपत्कालीन परिस्थितीत, कृपया तात्काळ तुमच्या स्थानिक आपत्कालीन सेवांना कॉल करा."
+      },
+      disclaimer: {
+        welcome: "AI आरोग्य आणि आनंद मध्ये आपले स्वागत आहे",
+        subtitle: "AI वैद्यकीय सहाय्यकांद्वारे समर्थित प्रत्येकासाठी मोफत आरोग्य माहिती आणि समर्थन।",
+        availableLanguage: "तुमच्या भाषेत उपलब्ध",
+        availableLanguageDesc: "आरामदायक संवादासाठी अनेक भारतीय भाषांमधून निवडा",
+        freeAccessible: "मोफत आणि सुलभ",
+        freeAccessibleDesc: "कोणतीही किंमत नाही, नोंदणी आवश्यक नाही - प्रत्येकासाठी आरोग्य समर्थन",
+        aiPowered: "AI-संचालित मार्गदर्शन",
+        aiPoweredDesc: "त्वरित आरोग्य माहिती मिळवा आणि व्यावसायिक काळजी कधी घ्यावी हे जाणून घ्या",
+        importantDisclaimers: "महत्त्वाचे अस्वीकरण",
+        disclaimer1: "ही सेवा केवळ आरोग्य माहिती प्रदान करते",
+        disclaimer2: "गंभीर परिस्थितींसाठी नेहमी व्यावसायिक वैद्यकीय काळजी घ्या",
+        disclaimer3: "AI चुका करू शकते - कृती करण्यापूर्वी माहिती सत्यापित करा",
+        disclaimer4: "आपत्कालीन परिस्थितीत, तुमच्या स्थानिक आपत्कालीन क्रमांकावर कॉल करा",
+        disclaimer5: "आरोग्य सेवा प्रदात्याशी सल्लामसलत केल्याशिवाय नवीन औषधे सुरू करू नका",
+        propertyNotice: "ही वेबसाइट आणि तिची सर्व सामग्री शाह हॅपिनेस फाउंडेशन आणि त्याच्या भागीदारांची विशेष मालमत्ता आहे. कृपया लक्षात घ्या की ही वेबसाइट सध्या त्याच्या सुरुवातीच्या विकास टप्प्यात आहे आणि सार्वजनिक किंवा मोठ्या प्रमाणात प्रकाशनासाठी नाही. पुढे जाऊन, तुम्ही शाह हॅपिनेस फाउंडेशनकडून पूर्व मंजुरीशिवाय तुमची लॉगिन क्रेडेन्शियल्स शेअर न करण्यास किंवा अनधिकृत कोणालाही प्रवेश न देण्यास सहमत आहात. येत्या दिवसांत वापरकर्ता इंटरफेस आणि अनुभव वाढविण्यासाठी तुमच्या अभिप्रायाची प्रशंसा केली जाते.",
+        checkboxText: "मला समजले आहे की हे केवळ माहितीसाठी आहे आणि व्यावसायिक वैद्यकीय सेवेची जागा नाही. मी आरोग्य निर्णय घेण्यापूर्वी AI-व्युत्पन्न माहिती सत्यापित करीन.",
+        acceptButton: "मला समजले - सुरू करा",
+        acceptTerms: "\"स्वीकार करा\" वर क्लिक करून, तुम्ही कबूल करता की तुम्ही हे अस्वीकरण वाचले आणि समजले आहे आणि या अटींचे पालन करण्यास सहमत आहात."
       }
     }
   },
@@ -563,6 +623,26 @@ const resources = {
         noticeTitle: "મહત્વપૂર્ણ સૂચના",
         noticeText1: "અમારી વર્ચ્યુઅલ ડૉક્ટર સેવા આરોગ્ય માહિતી અને પ્રાથમિક માર્ગદર્શન પ્રદાન કરવા માટે ડિઝાઇન કરવામાં આવી છે. તે વ્યાવસાયિક તબીબી સલાહ, નિદાન અથવા સારવારનો વિકલ્પ નથી. તબીબી સ્થિતિઓ અથવા સારવાર વિશે તમારા પ્રશ્નો માટે હંમેશા લાયક આરોગ્યસંભાળ પ્રદાતાઓની સલાહ લો.",
         noticeText2: "તબીબી કટોકટીના કિસ્સામાં, કૃપા કરીને તરત જ તમારી સ્થાનિક કટોકટી સેવાઓને કૉલ કરો."
+      },
+      disclaimer: {
+        welcome: "AI આરોગ્ય અને સુખાકારીમાં આપનું સ્વાગત છે",
+        subtitle: "AI તબીબી સહાયકો દ્વારા સંચાલિત બધા માટે મફત આરોગ્ય માહિતી અને સહાય.",
+        availableLanguage: "તમારી ભાષામાં ઉપલબ્ધ",
+        availableLanguageDesc: "આરામદાયક સંચાર માટે બહુવિધ ભારતીય ભાષાઓમાંથી પસંદ કરો",
+        freeAccessible: "મફત અને સુલભ",
+        freeAccessibleDesc: "કોઈ ખર્ચ નથી, નોંધણી જરૂરી નથી - બધા માટે આરોગ્ય સહાય",
+        aiPowered: "AI-સંચાલિત માર્ગદર્શન",
+        aiPoweredDesc: "તાત્કાલિક આરોગ્ય માહિતી મેળવો અને વ્યાવસાયિક સંભાળ ક્યારે લેવી તે જાણો",
+        importantDisclaimers: "મહત્વપૂર્ણ અસ્વીકરણ",
+        disclaimer1: "આ સેવા માત્ર આરોગ્ય માહિતી પ્રદાન કરે છે",
+        disclaimer2: "ગંભીર પરિસ્થિતિઓ માટે હંમેશા વ્યાવસાયિક તબીબી સંભાળ લો",
+        disclaimer3: "AI ભૂલો કરી શકે છે - કાર્ય કરતા પહેલા માહિતી ચકાસો",
+        disclaimer4: "કટોકટીમાં, તમારા સ્થાનિક કટોકટી નંબર પર કૉલ કરો",
+        disclaimer5: "આરોગ્ય સંભાળ પ્રદાતા સાથે સલાહ લીધા વિના નવી દવાઓ શરૂ કરશો નહીં",
+        propertyNotice: "આ વેબસાઇટ અને તેની તમામ સામગ્રી શાહ હેપ્પીનેસ ફાઉન્ડેશન અને તેના ભાગીદારોની વિશિષ્ટ મિલકત છે. કૃપા કરીને નોંધ લો કે આ વેબસાઇટ હાલમાં તેના પ્રારંભિક વિકાસ તબક્કામાં છે અને જાહેર અથવા મોટા પાયે પ્રકાશન માટે નથી. આગળ વધીને, તમે શાહ હેપ્પીનેસ ફાઉન્ડેશનની પૂર્વ મંજૂરી વિના કોઈપણ અનધિકૃત વ્યક્તિને તમારા લોગિન ક્રેડેન્શિયલ્સ શેર ન કરવા અથવા ઍક્સેસ ન આપવા માટે સંમત થાઓ છો. આવનારા દિવસોમાં વપરાશકર્તા ઇન્ટરફેસ અને અનુભવને વધારવા માટે તમારા પ્રતિસાદની પ્રશંસા કરવામાં આવે છે.",
+        checkboxText: "હું સમજું છું કે આ માત્ર માહિતી માટે છે અને વ્યાવસાયિક તબીબી સંભાળનો વિકલ્પ નથી. હું આરોગ્ય નિર્ણયો લેતા પહેલા AI-જનરેટેડ માહિતી ચકાસીશ.",
+        acceptButton: "હું સમજું છું - શરૂ કરો",
+        acceptTerms: "\"સ્વીકારો\" પર ક્લિક કરીને, તમે સ્વીકારો છો કે તમે આ અસ્વીકરણ વાંચ્યું અને સમજ્યું છે અને આ શરતોનું પાલન કરવા માટે સંમત થાઓ છો."
       }
     }
   }
