@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Clock, Shield, Video, CheckCircle, ArrowRight, Phone } from "lucide-react";
+import { Heart, Clock, Shield, Video, CheckCircle, ArrowRight, Phone, Target, Play } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import ConfidentialBanner from "@/components/ConfidentialBanner";
 import AgentSelector from "@/components/AgentSelector";
@@ -65,6 +65,61 @@ const Home = () => {
 
       {/* Agent Selection Section */}
       <AgentSelector />
+
+      {/* Mission Section */}
+      <section className="py-12 lg:py-16 bg-background">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-gradient-to-br from-primary to-accent p-3 rounded-full">
+                <Target className="h-6 w-6 text-white" />
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">{t('mission.title')}</h2>
+            </div>
+            <div className="space-y-4 text-muted-foreground">
+              <p className="text-base md:text-lg leading-relaxed">
+                {t('mission.intro')}
+              </p>
+              <p className="text-base md:text-lg leading-relaxed">
+                {t('mission.belief')}
+              </p>
+              <p className="text-base md:text-lg leading-relaxed">
+                {t('mission.goal')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Video Section */}
+      <section className="py-12 lg:py-16 bg-gradient-to-br from-secondary/10 to-background">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="bg-gradient-to-br from-primary to-accent p-3 rounded-full">
+                  <Play className="h-6 w-6 text-white" />
+                </div>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">{t('demoVideo.title')}</h2>
+              </div>
+              <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
+                {t('demoVideo.description')}
+              </p>
+            </div>
+            <Card className="overflow-hidden shadow-xl border-border/50">
+              <div className="relative aspect-video bg-secondary/20">
+                <iframe
+                  src="https://drive.google.com/file/d/1b6OeM4TXtqJ-tHNnyqA3jVLEuv7QftGh/preview"
+                  className="w-full h-full"
+                  allow="autoplay"
+                  allowFullScreen
+                  title={t('demoVideo.title')}
+                />
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="py-12 lg:py-20 bg-gradient-to-br from-secondary/20 to-background">

@@ -27,7 +27,18 @@ export const useGeoLocation = () => {
           return;
         }
 
-        // Try to get location from IP
+        // Check if user has manually selected a language (flag set by language selector)
+        const userManuallySelected = localStorage.getItem('languageManuallySelected');
+        if (userManuallySelected === 'true') {
+          return;
+        }
+
+        // Try to get location from IP only on first visit
+        const hasDetectedBefore = localStorage.getItem('hasDetectedLanguage');
+        if (hasDetectedBefore) {
+          return;
+        }
+
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
         
@@ -41,6 +52,8 @@ export const useGeoLocation = () => {
         } else {
           i18n.changeLanguage('en');
         }
+        
+        localStorage.setItem('hasDetectedLanguage', 'true');
       } catch (error) {
         console.error('Error detecting location:', error);
         i18n.changeLanguage('en');
