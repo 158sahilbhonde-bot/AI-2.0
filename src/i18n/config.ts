@@ -149,7 +149,11 @@ const resources = {
         feature4Desc: "Get guidance for your entire family's health needs",
         noticeTitle: "Important Notice",
         noticeText1: "Our virtual assistant service is designed to provide health information and preliminary guidance. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified healthcare providers with questions you may have regarding medical conditions or treatments.",
-        noticeText2: "In case of a medical emergency, please call your local emergency services immediately."
+        noticeText2: "In case of a medical emergency, please call your local emergency services immediately.",
+        commonDiseasesTitle: "50 Common Diseases in India",
+        commonDiseasesSubtitle: "Learn about the most common health conditions affecting people in India",
+        healthGuidanceTitle: "General Health Guidance",
+        healthGuidanceSubtitle: "Search for diseases and get comprehensive health information",
       },
       disclaimer: {
         welcome: "Welcome to AI Health & Happiness",
@@ -319,8 +323,12 @@ const resources = {
         feature4Title: "परिवार की देखभाल",
         feature4Desc: "अपने पूरे परिवार की स्वास्थ्य आवश्यकताओं के लिए मार्गदर्शन प्राप्त करें",
         noticeTitle: "महत्वपूर्ण सूचना",
-        noticeText1: "हमारी वर्चुअल डॉक्टर सेवा स्वास्थ्य जानकारी और प्रारंभिक मार्गदर्शन प्रदान करने के लिए डिज़ाइन की गई है। यह पेशेवर चिकित्सा सलाह, निदान या उपचार का विकल्प नहीं है। चिकित्सा स्थितियों या उपचारों के बारे में प्रश्नों के लिए हमेशा योग्य स्वास्थ्य सेवा प्रदाताओं की सलाह लें।",
-        noticeText2: "चिकित्सा आपातकाल की स्थिति में, कृपया तुरंत अपनी स्थानीय आपातकालीन सेवाओं को कॉल करें।"
+        noticeText1: "हमारी वर्चुअल सहायक सेवा स्वास्थ्य जानकारी और प्रारंभिक मार्गदर्शन प्रदान करने के लिए डिज़ाइन की गई है। यह पेशेवर चिकित्सा सलाह, निदान या उपचार का विकल्प नहीं है। चिकित्सीय स्थितियों या उपचारों के बारे में आपके पास जो भी प्रश्न हों, हमेशा योग्य स्वास्थ्य सेवा प्रदाताओं की सलाह लें।",
+        noticeText2: "चिकित्सीय आपातकाल की स्थिति में, कृपया तुरंत अपनी स्थानीय आपातकालीन सेवाओं को कॉल करें।",
+        commonDiseasesTitle: "भारत में 50 सामान्य बीमारियाँ",
+        commonDiseasesSubtitle: "भारत में लोगों को प्रभावित करने वाली सबसे आम स्वास्थ्य स्थितियों के बारे में जानें",
+        healthGuidanceTitle: "सामान्य स्वास्थ्य मार्गदर्शन",
+        healthGuidanceSubtitle: "बीमारियों की खोज करें और व्यापक स्वास्थ्य जानकारी प्राप्त करें",
       },
       disclaimer: {
         welcome: "AI स्वास्थ्य और खुशहाली में आपका स्वागत है",
@@ -490,8 +498,12 @@ const resources = {
         feature4Title: "कौटुंबिक काळजी",
         feature4Desc: "तुमच्या संपूर्ण कुटुंबाच्या आरोग्य गरजांसाठी मार्गदर्शन मिळवा",
         noticeTitle: "महत्त्वाची सूचना",
-        noticeText1: "आमची व्हर्च्युअल डॉक्टर सेवा आरोग्य माहिती आणि प्राथमिक मार्गदर्शन प्रदान करण्यासाठी डिझाइन केली आहे. ही व्यावसायिक वैद्यकीय सल्ला, निदान किंवा उपचाराचा पर्याय नाही. वैद्यकीय परिस्थिती किंवा उपचारांविषयी तुमच्या प्रश्नांसाठी नेहमी पात्र आरोग्य सेवा प्रदात्यांचा सल्ला घ्या.",
-        noticeText2: "वैद्यकीय आपत्कालीन परिस्थितीत, कृपया तात्काळ तुमच्या स्थानिक आपत्कालीन सेवांना कॉल करा."
+        noticeText1: "आमची व्हर्च्युअल सहाय्यक सेवा आरोग्य माहिती आणि प्राथमिक मार्गदर्शन प्रदान करण्यासाठी डिझाइन केली आहे. ही व्यावसायिक वैद्यकीय सल्ला, निदान किंवा उपचाराचा पर्याय नाही. वैद्यकीय परिस्थिती किंवा उपचारांबद्दल तुमच्याकडे असलेल्या प्रश्नांसाठी नेहमी पात्र आरोग्यसेवा प्रदात्यांचा सल्ला घ्या.",
+        noticeText2: "वैद्यकीय आणीबाणीच्या परिस्थितीत, कृपया तुमच्या स्थानिक आणीबाणी सेवांना त्वरित कॉल करा.",
+        commonDiseasesTitle: "भारतातील ५० सामान्य रोग",
+        commonDiseasesSubtitle: "भारतातील लोकांना प्रभावित करणाऱ्या सर्वात सामान्य आरोग्य स्थितींबद्दल जाणून घ्या",
+        healthGuidanceTitle: "सामान्य आरोग्य मार्गदर्शन",
+        healthGuidanceSubtitle: "रोगांचा शोध घ्या आणि सर्वसमावेशक आरोग्य माहिती मिळवा",
       },
       disclaimer: {
         welcome: "AI आरोग्य आणि आनंद मध्ये आपले स्वागत आहे",
@@ -658,11 +670,15 @@ const resources = {
         feature2Desc: "તમારી આરોગ્ય માહિતી એન્ક્રિપ્ટેડ અને ગોપનીય છે",
         feature3Title: "બહુભાષી સપોર્ટ",
         feature3Desc: "તમારી પસંદગીની ભાષામાં વાતચીત કરો",
-        feature4Title: "કુટુંબ સંભાળ",
-        feature4Desc: "તમારા સંપૂર્ણ કુટુંબની આરોગ્ય જરૂરિયાતો માટે માર્ગદર્શન મેળવો",
+        feature4Title: "કૌટુંબિક સંભાળ",
+        feature4Desc: "તમારા સંપૂર્ણ પરિવારની આરોગ્ય જરૂરિયાતો માટે માર્ગદર્શન મેળવો",
         noticeTitle: "મહત્વપૂર્ણ સૂચના",
-        noticeText1: "અમારી વર્ચ્યુઅલ ડૉક્ટર સેવા આરોગ્ય માહિતી અને પ્રાથમિક માર્ગદર્શન પ્રદાન કરવા માટે ડિઝાઇન કરવામાં આવી છે. તે વ્યાવસાયિક તબીબી સલાહ, નિદાન અથવા સારવારનો વિકલ્પ નથી. તબીબી સ્થિતિઓ અથવા સારવાર વિશે તમારા પ્રશ્નો માટે હંમેશા લાયક આરોગ્યસંભાળ પ્રદાતાઓની સલાહ લો.",
-        noticeText2: "તબીબી કટોકટીના કિસ્સામાં, કૃપા કરીને તરત જ તમારી સ્થાનિક કટોકટી સેવાઓને કૉલ કરો."
+        noticeText1: "અમારી વર્ચ્યુઅલ સહાયક સેવા આરોગ્ય માહિતી અને પ્રાથમિક માર્ગદર્શન પ્રદાન કરવા માટે રચાયેલ છે. આ વ્યાવસાયિક તબીબી સલાહ, નિદાન અથવા સારવારનો વિકલ્પ નથી. તબીબી સ્થિતિઓ અથવા સારવારો વિશે તમારી પાસે હોય તેવા પ્રશ્નો માટે હંમેશા લાયક આરોગ્યસંભાળ પ્રદાતાઓની સલાહ લો.",
+        noticeText2: "તબીબી કટોકટીના કિસ્સામાં, કૃપા કરીને તાત્કાલિક તમારી સ્થાનિક કટોકટી સેવાઓને કૉલ કરો.",
+        commonDiseasesTitle: "ભારતમાં 50 સામાન્ય રોગો",
+        commonDiseasesSubtitle: "ભારતમાં લોકોને અસર કરતી સૌથી સામાન્ય આરોગ્ય સ્થિતિઓ વિશે જાણો",
+        healthGuidanceTitle: "સામાન્ય આરોગ્ય માર્ગદર્શન",
+        healthGuidanceSubtitle: "રોગો શોધો અને વ્યાપક આરોગ્ય માહિતી મેળવો",
       },
       disclaimer: {
         welcome: "AI આરોગ્ય અને સુખાકારીમાં આપનું સ્વાગત છે",

@@ -14,8 +14,19 @@ import {
   Shield,
   Globe,
   CheckCircle,
+  BookOpen,
+  Search,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { DiseaseSearch } from "@/components/DiseaseSearch";
+
+import { commonDiseasesIndia } from "@/data/commonDiseases";
 
 const Services = () => {
   const { t } = useTranslation();
@@ -162,10 +173,77 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Important Notice */}
+      {/* General Health Guidance Section */}
+      <section className="py-20 bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Search className="h-8 w-8 text-primary" />
+              <h2 className="text-3xl lg:text-4xl font-bold">
+                {t('services.healthGuidanceTitle')}
+              </h2>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              {t('services.healthGuidanceSubtitle')}
+            </p>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <DiseaseSearch />
+          </div>
+        </div>
+      </section>
+
+      {/* 50 Common Diseases Section */}
       <section className="py-20">
         <div className="container mx-auto px-4 lg:px-8">
-          <Card className="p-8 bg-gradient-to-br from-accent/10 to-primary/10 border-accent/20">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <BookOpen className="h-8 w-8 text-primary" />
+              <h2 className="text-3xl lg:text-4xl font-bold">
+                {t('services.commonDiseasesTitle')}
+              </h2>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              {t('services.commonDiseasesSubtitle')}
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <Card className="p-6">
+              <Accordion type="single" collapsible className="w-full">
+                {commonDiseasesIndia.map((disease, index) => (
+                  <AccordionItem key={index} value={`disease-${index}`}>
+                    <AccordionTrigger className="text-left hover:text-primary">
+                      <span className="font-semibold">{disease.name}</span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-4 pt-2">
+                        <div>
+                          <h4 className="font-semibold text-primary mb-2">Description:</h4>
+                          <p className="text-muted-foreground">{disease.description}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-primary mb-2">Symptoms:</h4>
+                          <p className="text-muted-foreground">{disease.symptoms}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-primary mb-2">Prevention:</h4>
+                          <p className="text-muted-foreground">{disease.prevention}</p>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Important Notice */}
+      <section className="py-20 bg-gradient-to-br from-accent/10 to-primary/10">
+        <div className="container mx-auto px-4 lg:px-8">
+          <Card className="p-8 bg-card/50 border-accent/20">
             <div className="max-w-3xl mx-auto space-y-4">
               <div className="flex items-center gap-3 mb-4">
                 <MessageCircle className="h-6 w-6 text-primary" />
