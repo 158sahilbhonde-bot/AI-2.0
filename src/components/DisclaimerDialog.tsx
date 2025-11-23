@@ -17,11 +17,15 @@ const DisclaimerDialog = () => {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    setOpen(true);
+    const hasAccepted = sessionStorage.getItem("disclaimerAccepted");
+    if (!hasAccepted) {
+      setOpen(true);
+    }
   }, []);
 
   const handleAccept = () => {
     if (checked) {
+      sessionStorage.setItem("disclaimerAccepted", "true");
       setOpen(false);
     }
   };
