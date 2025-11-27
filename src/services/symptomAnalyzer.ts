@@ -17,6 +17,7 @@ export interface SymptomAnalysisResult {
   diagnosis: string;
   treatment: string;
   homeRemedies: string;
+  exercises: string;
   whenToSeeDoctor: string;
 }
 
@@ -42,9 +43,9 @@ ${previousAnswers ? `\nAdditional Information: ${JSON.stringify(previousAnswers)
 IMPORTANT INSTRUCTIONS:
 1. Identify 5-8 most likely medical conditions based on the symptoms
 2. Order by likelihood (highest confidence first)
-3. For EACH condition, provide comprehensive information
+3. For EACH condition, provide comprehensive, practical information
 4. Be conservative with confidence scores (realistic medical assessment)
-5. Include practical medical advice
+5. ALWAYS emphasize consulting a healthcare provider
 6. Return ONLY valid JSON (no markdown, no code blocks, no extra text)
 
 Return this EXACT JSON structure:
@@ -58,13 +59,14 @@ Return this EXACT JSON structure:
     "symptoms": "Complete list of common symptoms with descriptions",
     "causes": "Common causes and risk factors",
     "diagnosis": "How this condition is typically diagnosed",
-    "treatment": "Standard treatment approaches and medications",
-    "homeRemedies": "Self-care measures and lifestyle recommendations",
-    "whenToSeeDoctor": "Warning signs that require immediate medical attention"
+    "treatment": "Standard medical treatments and medications. MUST start with 'Consult your doctor for proper diagnosis and treatment.' Include both medical and general treatment approaches.",
+    "homeRemedies": "Practical home remedies, self-care measures, lifestyle changes, and dietary recommendations. Start with 'While consulting a doctor is important, these home remedies may help:'",
+    "exercises": "Recommended exercises, stretches, physical therapy activities, and movement recommendations. Start with 'After consulting your healthcare provider, consider these exercises:' Include safety precautions.",
+    "whenToSeeDoctor": "Clear warning signs and situations requiring immediate medical attention. Be specific about emergency symptoms."
   }
 ]
 
-Be thorough but concise. Each field should be informative and medically accurate.`;
+Be thorough, practical, and medically accurate. Each field should provide actionable information while emphasizing professional medical consultation.`;
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',

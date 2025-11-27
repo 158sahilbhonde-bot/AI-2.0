@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Brain, Loader2, ChevronRight, AlertCircle, CheckCircle2, HelpCircle, Stethoscope, Heart, Home, AlertTriangle } from "lucide-react";
+import { Brain, Loader2, ChevronRight, AlertCircle, CheckCircle2, HelpCircle, Stethoscope, Heart, Home, AlertTriangle, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -503,11 +503,25 @@ export const SymptomChecker = () => {
                               <AccordionItem value="remedies">
                                 <AccordionTrigger className="flex items-center gap-2">
                                   <Home className="h-4 w-4" />
-                                  <span>Home Care & Self-Management</span>
+                                  <span>Home Remedies & Lifestyle</span>
                                 </AccordionTrigger>
                                 <AccordionContent>
                                   <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
                                     {result.homeRemedies}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            )}
+
+                            {result.exercises && (
+                              <AccordionItem value="exercises">
+                                <AccordionTrigger className="flex items-center gap-2">
+                                  <Dumbbell className="h-4 w-4" />
+                                  <span>Exercise & Physical Therapy</span>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {result.exercises}
                                   </div>
                                 </AccordionContent>
                               </AccordionItem>
