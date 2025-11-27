@@ -1,10 +1,5 @@
-import OpenAI from 'openai';
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true // Note: In production, API calls should go through your backend
-});
+// Import the local medical database
+import medicalDatabase from '@/data/medical_conditions_complete_database_FIXED.json';
 
 export interface SymptomAnalysisResult {
   conditionName: string;
@@ -31,84 +26,241 @@ export interface FollowUpQuestion {
   options?: string[];
 }
 
+// Extract all unique symptoms from the database for autocomplete
+let symptomCache: string[] | null = null;
+
+function getAllSymptoms(): string[] {
+  if (symptomCache) {
+    return symptomCache;
+  }
+
+  const symptomsSet = new Set<string>();
+
+  medicalDatabase.conditions.forEach(condition => {
+    // Extract symptoms from the symptoms field
+    const symptomText = condition.symptoms.toLowerCase();
+
+    // Common symptom patterns to extract
+    const patterns = [
+      // Bullet points with asterisks
+      /\*\s+\*\*([^*]+)\*\*/g,
+      // Numbered items
+      /\d+\.\s+\*\*([^*]+)\*\*/g,
+      // Items in parentheses or standalone
+      /(?:^|\n)\s*[-•]\s*([^\n]+)/g,
+    ];
+
+    patterns.forEach(pattern => {
+      const matches = symptomText.matchAll(pattern);
+      for (const match of matches) {
+        let symptom = match[1].trim();
+        // Clean up the symptom text
+        symptom = symptom
+          .replace(/\([^)]*\)/g, '') // Remove parentheses
+          .replace(/[:;,.].*$/, '') // Remove everything after colon, semicolon, comma, or period
+          .trim();
+
+        if (symptom.length > 3 && symptom.length < 100) {
+          symptomsSet.add(symptom);
+        }
+      }
+    });
+  });
+
+  // Add common general symptoms
+  const commonSymptoms = [
+    'headache', 'fever', 'fatigue', 'nausea', 'vomiting', 'diarrhea',
+    'cough', 'sore throat', 'runny nose', 'chest pain', 'shortness of breath',
+    'dizziness', 'abdominal pain', 'back pain', 'muscle pain', 'joint pain',
+    'rash', 'itching', 'swelling', 'numbness', 'tingling', 'weakness',
+    'blurred vision', 'ear pain', 'difficulty swallowing', 'loss of appetite',
+    'weight loss', 'weight gain', 'insomnia', 'anxiety', 'depression',
+    'confusion', 'memory loss', 'difficulty concentrating', 'night sweats',
+    'chills', 'rapid heartbeat', 'irregular heartbeat', 'high blood pressure',
+    'low blood pressure', 'painful urination', 'frequent urination',
+    'blood in urine', 'constipation', 'bloating', 'heartburn', 'acid reflux',
+  ];
+
+  commonSymptoms.forEach(s => symptomsSet.add(s));
+
+  symptomCache = Array.from(symptomsSet).sort();
+  return symptomCache;
+}
+
 /**
- * Analyzes user symptoms using OpenAI's medical knowledge
+ * Gets symptom suggestions based on partial input (for autocomplete)
+ */
+export async function getSymptomSuggestions(partialInput: string): Promise<string[]> {
+  if (!partialInput || partialInput.length < 2) {
+    return [];
+  }
+
+  const allSymptoms = getAllSymptoms();
+  const searchTerm = partialInput.toLowerCase().trim();
+
+  // Filter symptoms that match the input
+  const matches = allSymptoms.filter(symptom =>
+    symptom.toLowerCase().includes(searchTerm)
+  );
+
+  // Prioritize symptoms that start with the search term
+  const startsWithMatches = matches.filter(s => s.toLowerCase().startsWith(searchTerm));
+  const containsMatches = matches.filter(s => !s.toLowerCase().startsWith(searchTerm));
+
+  return [...startsWithMatches, ...containsMatches].slice(0, 10);
+}
+
+/**
+ * Extract summary items from text
+ */
+function extractSummaryItems(text: string, count: number = 5): string[] {
+  const items: string[] = [];
+
+  // Try to extract bullet points or numbered items
+  const bulletPattern = /(?:^|\n)\s*[*•-]\s+\*\*([^*]+)\*\*/g;
+  let matches = text.matchAll(bulletPattern);
+
+  for (const match of matches) {
+    let item = match[1].trim();
+    item = item.replace(/[:;.].*$/, '').trim();
+    if (item.length > 5 && item.length < 150) {
+      items.push(item);
+    }
+    if (items.length >= count) break;
+  }
+
+  // If not enough items, try sentences
+  if (items.length < count) {
+    const sentences = text.split(/[.!?]\s+/);
+    for (const sentence of sentences) {
+      const clean = sentence.replace(/\*\*/g, '').trim();
+      if (clean.length > 10 && clean.length < 150 && !items.includes(clean)) {
+        items.push(clean);
+      }
+      if (items.length >= count) break;
+    }
+  }
+
+  return items.slice(0, count);
+}
+
+/**
+ * Calculate symptom match score between user symptoms and condition
+ */
+function calculateSymptomMatch(userSymptoms: string[], conditionSymptoms: string): number {
+  const conditionText = conditionSymptoms.toLowerCase();
+  let matchCount = 0;
+  let totalWeight = 0;
+
+  userSymptoms.forEach(symptom => {
+    const symptomLower = symptom.toLowerCase();
+
+    // Check for exact matches (higher weight)
+    if (conditionText.includes(symptomLower)) {
+      matchCount += 2;
+      totalWeight += 2;
+    } else {
+      // Check for partial word matches
+      const words = symptomLower.split(' ');
+      const wordMatches = words.filter(word =>
+        word.length > 3 && conditionText.includes(word)
+      ).length;
+
+      if (wordMatches > 0) {
+        matchCount += wordMatches * 0.5;
+        totalWeight += 1;
+      } else {
+        totalWeight += 2;
+      }
+    }
+  });
+
+  if (totalWeight === 0) return 0;
+
+  // Calculate percentage (0-100)
+  const percentage = (matchCount / totalWeight) * 100;
+  return Math.min(95, Math.round(percentage)); // Cap at 95% to be conservative
+}
+
+/**
+ * Analyzes user symptoms using the local medical database
  */
 export async function analyzeSymptoms(
   userSymptoms: string,
   previousAnswers?: Record<string, string>
 ): Promise<SymptomAnalysisResult[]> {
   try {
-    const prompt = `You are an expert medical AI assistant. Analyze the following symptoms and provide the most likely medical conditions.
+    // Parse user symptoms into an array
+    const symptomList = userSymptoms
+      .split(/[,;]/)
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
 
-User Symptoms: ${userSymptoms}
-${previousAnswers ? `\nAdditional Information: ${JSON.stringify(previousAnswers)}` : ''}
-
-IMPORTANT INSTRUCTIONS:
-1. Identify 5-8 most likely medical conditions based on the symptoms
-2. Order by likelihood (highest confidence first)
-3. For EACH condition, provide comprehensive, practical information
-4. Be conservative with confidence scores (realistic medical assessment)
-5. ALWAYS emphasize consulting a healthcare provider
-6. Return ONLY valid JSON (no markdown, no code blocks, no extra text)
-
-Return this EXACT JSON structure:
-[
-  {
-    "conditionName": "Name of the condition",
-    "confidence": 75,
-    "matchingSymptoms": ["symptom1", "symptom2"],
-    "reasoning": "Brief explanation of why this condition matches",
-    "overview": "2-3 paragraph overview of the condition",
-    "symptoms": "Complete list of common symptoms with descriptions",
-    "causes": "Common causes and risk factors",
-    "causesSummary": ["Main cause 1", "Main cause 2", "Main cause 3"],
-    "riskFactorsSummary": ["Risk factor 1", "Risk factor 2", "Risk factor 3"],
-    "diagnosis": "How this condition is typically diagnosed",
-    "treatment": "Standard medical treatments and medications. MUST start with 'Consult your doctor for proper diagnosis and treatment.' Include both medical and general treatment approaches.",
-    "homeRemedies": "Practical home remedies, self-care measures, lifestyle changes, and dietary recommendations. Start with 'While consulting a doctor is important, these home remedies may help:'",
-    "homeRemediesSummary": ["Key remedy 1", "Key remedy 2", "Key remedy 3"],
-    "exercises": "Recommended exercises, stretches, physical therapy activities, and movement recommendations. Start with 'After consulting your healthcare provider, consider these exercises:' Include safety precautions.",
-    "exercisesSummary": ["Key exercise 1", "Key exercise 2", "Key exercise 3"],
-    "whenToSeeDoctor": "Clear warning signs and situations requiring immediate medical attention. Be specific about emergency symptoms."
-  }
-]
-
-IMPORTANT for summary fields:
-- causesSummary: 3-5 main causes (concise, one-line each)
-- riskFactorsSummary: 3-5 key risk factors (concise, one-line each)
-- homeRemediesSummary: 3-5 practical home remedies (actionable, one-line each)
-- exercisesSummary: 3-5 specific exercises or physical therapy activities (clear, one-line each)
-
-Be thorough, practical, and medically accurate. Each field should provide actionable information while emphasizing professional medical consultation.`;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert medical AI that provides comprehensive condition analysis. Always return valid JSON only. Be medically accurate, thorough, and practical.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.3,
-      max_tokens: 4000
-    });
-
-    const content = response.choices[0]?.message?.content?.trim() || '[]';
-
-    // Remove markdown code blocks if present
-    let jsonContent = content;
-    if (content.startsWith('```')) {
-      jsonContent = content.replace(/```json?\n?/g, '').replace(/```\n?$/g, '').trim();
+    if (symptomList.length === 0) {
+      throw new Error('Please enter at least one symptom');
     }
 
-    const results = JSON.parse(jsonContent) as SymptomAnalysisResult[];
+    const results: SymptomAnalysisResult[] = [];
 
-    return results.slice(0, 8); // Return top 8
+    // Analyze each condition in the database
+    medicalDatabase.conditions.forEach(condition => {
+      const confidence = calculateSymptomMatch(symptomList, condition.symptoms);
+
+      // Only include conditions with some match
+      if (confidence > 10) {
+        // Find which symptoms matched
+        const matchingSymptoms = symptomList.filter(symptom =>
+          condition.symptoms.toLowerCase().includes(symptom.toLowerCase())
+        );
+
+        // Generate reasoning
+        const reasoning = matchingSymptoms.length > 0
+          ? `This condition matches ${matchingSymptoms.length} of your symptoms: ${matchingSymptoms.join(', ')}.`
+          : 'This condition has symptoms that partially overlap with your description.';
+
+        // Extract summaries from the database text
+        const causesSummary = extractSummaryItems(condition.causes_and_risk_factors, 4);
+        const riskFactorsSummary = extractSummaryItems(
+          condition.causes_and_risk_factors.split('Risk Factors')[1] || condition.causes_and_risk_factors,
+          4
+        );
+        const homeRemediesSummary = extractSummaryItems(condition.home_remedies_and_lifestyle, 4);
+        const exercisesSummary = extractSummaryItems(condition.exercises, 4);
+
+        // Create when to see doctor message
+        const whenToSeeDoctor =
+          'Consult a healthcare provider if: symptoms persist or worsen, you experience severe pain, ' +
+          'you have difficulty breathing, you notice unusual swelling or bleeding, or if you are concerned ' +
+          'about your symptoms. Seek immediate medical attention for severe or life-threatening symptoms.';
+
+        results.push({
+          conditionName: condition.condition_name,
+          confidence,
+          matchingSymptoms,
+          reasoning,
+          overview: condition.overview,
+          symptoms: condition.symptoms,
+          causes: condition.causes_and_risk_factors,
+          causesSummary,
+          riskFactorsSummary,
+          diagnosis: condition.diagnosis,
+          treatment: 'Consult your doctor for proper diagnosis and treatment. ' + condition.treatment,
+          homeRemedies: 'While consulting a doctor is important, these approaches may help: ' +
+                        condition.home_remedies_and_lifestyle,
+          homeRemediesSummary,
+          exercises: 'After consulting your healthcare provider, consider these activities: ' +
+                    condition.exercises,
+          exercisesSummary,
+          whenToSeeDoctor,
+        });
+      }
+    });
+
+    // Sort by confidence (highest first)
+    results.sort((a, b) => b.confidence - a.confidence);
+
+    // Return top 8 results
+    return results.slice(0, 8);
   } catch (error) {
     console.error('Error analyzing symptoms:', error);
     throw new Error('Failed to analyze symptoms. Please try again.');
@@ -122,138 +274,48 @@ export async function generateFollowUpQuestions(
   userSymptoms: string,
   currentAnalysis: SymptomAnalysisResult[]
 ): Promise<FollowUpQuestion[]> {
-  try {
-    const prompt = `Based on the user's symptoms and the current analysis, generate 2-3 relevant follow-up questions to help narrow down the diagnosis.
+  // Generate basic follow-up questions based on top conditions
+  const questions: FollowUpQuestion[] = [];
 
-User Symptoms: ${userSymptoms}
+  if (currentAnalysis.length > 0) {
+    const topCondition = currentAnalysis[0];
 
-Current Top Matches:
-${currentAnalysis.slice(0, 3).map(a => `- ${a.conditionName} (${a.confidence}% confidence)`).join('\n')}
-
-Generate questions that would help differentiate between these conditions. Return ONLY a JSON array with this format:
-[{"question": "...", "type": "yes_no"}, {"question": "...", "type": "multiple_choice", "options": ["option1", "option2", "option3"]}]
-
-Types: yes_no, multiple_choice, or text`;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a medical AI that generates relevant follow-up questions. Return only valid JSON.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.5,
-      max_tokens: 500
+    // Add duration question
+    questions.push({
+      question: 'How long have you been experiencing these symptoms?',
+      type: 'multiple_choice',
+      options: ['Less than 24 hours', '1-3 days', '4-7 days', 'More than a week', 'More than a month']
     });
 
-    const content = response.choices[0]?.message?.content?.trim() || '[]';
+    // Add severity question
+    questions.push({
+      question: 'How would you rate the severity of your symptoms?',
+      type: 'multiple_choice',
+      options: ['Mild (barely noticeable)', 'Moderate (uncomfortable but manageable)', 'Severe (significantly affecting daily activities)']
+    });
 
-    // Remove markdown code blocks if present
-    let jsonContent = content;
-    if (content.startsWith('```')) {
-      jsonContent = content.replace(/```json?\n?/g, '').replace(/```\n?$/g, '').trim();
+    // Add a condition-specific question
+    if (topCondition.conditionName.toLowerCase().includes('fever') ||
+        topCondition.symptoms.toLowerCase().includes('fever')) {
+      questions.push({
+        question: 'Have you experienced a fever?',
+        type: 'yes_no'
+      });
     }
-
-    return JSON.parse(jsonContent) as FollowUpQuestion[];
-  } catch (error) {
-    console.error('Error generating follow-up questions:', error);
-    return [];
   }
+
+  return questions.slice(0, 3);
 }
 
 /**
  * Extracts and normalizes symptoms from natural language input
  */
 export async function extractSymptoms(userInput: string): Promise<string[]> {
-  try {
-    const prompt = `Extract distinct medical symptoms from this text. Return a JSON array of symptom strings.
+  // Simple extraction: split by common delimiters
+  const symptoms = userInput
+    .split(/[,;.!?]|\sand\s|\swith\s/)
+    .map(s => s.trim())
+    .filter(s => s.length > 2);
 
-User Input: "${userInput}"
-
-Return only the JSON array, e.g.: ["headache", "fever", "nausea"]`;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a medical text analyzer. Extract symptoms and return only a JSON array.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.3,
-      max_tokens: 200
-    });
-
-    const content = response.choices[0]?.message?.content?.trim() || '[]';
-
-    // Remove markdown code blocks if present
-    let jsonContent = content;
-    if (content.startsWith('```')) {
-      jsonContent = content.replace(/```json?\n?/g, '').replace(/```\n?$/g, '').trim();
-    }
-
-    return JSON.parse(jsonContent) as string[];
-  } catch (error) {
-    console.error('Error extracting symptoms:', error);
-    return [];
-  }
-}
-
-/**
- * Gets symptom suggestions based on partial input (for autocomplete)
- */
-export async function getSymptomSuggestions(partialInput: string): Promise<string[]> {
-  if (!partialInput || partialInput.length < 2) {
-    return [];
-  }
-
-  try {
-    const prompt = `The user is typing a symptom starting with "${partialInput}". Suggest 8-10 common, specific medical symptoms that match this input.
-
-Examples:
-- If input is "head", suggest: "headache", "headache in front of head", "headache on one side of head", "head injury", "head pressure", etc.
-- If input is "chest", suggest: "chest pain", "chest tightness", "chest pressure", "chest discomfort when breathing", etc.
-
-Return ONLY a JSON array of symptom strings: ["symptom1", "symptom2", ...]
-
-Be specific and medically accurate. Focus on common symptoms people search for.`;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a medical symptom autocomplete assistant. Return only valid JSON arrays of symptom suggestions.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.5,
-      max_tokens: 300
-    });
-
-    const content = response.choices[0]?.message?.content?.trim() || '[]';
-
-    // Remove markdown code blocks if present
-    let jsonContent = content;
-    if (content.startsWith('```')) {
-      jsonContent = content.replace(/```json?\n?/g, '').replace(/```\n?$/g, '').trim();
-    }
-
-    return JSON.parse(jsonContent) as string[];
-  } catch (error) {
-    console.error('Error getting symptom suggestions:', error);
-    return [];
-  }
+  return symptoms.slice(0, 10); // Limit to 10 symptoms
 }
