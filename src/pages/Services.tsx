@@ -24,7 +24,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { DiseaseSearch } from "@/components/DiseaseSearch";
+import { EnhancedHealthSearch } from "@/components/EnhancedHealthSearch";
 
 import { commonDiseasesIndia } from "@/data/commonDiseases";
 
@@ -188,7 +188,7 @@ const Services = () => {
             </p>
           </div>
           <div className="max-w-4xl mx-auto">
-            <DiseaseSearch />
+            <EnhancedHealthSearch />
           </div>
         </div>
       </section>
