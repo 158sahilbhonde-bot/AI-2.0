@@ -11,6 +11,13 @@ export interface SymptomAnalysisResult {
   confidence: number; // 0-100
   matchingSymptoms: string[];
   reasoning: string;
+  overview: string;
+  symptoms: string;
+  causes: string;
+  diagnosis: string;
+  treatment: string;
+  homeRemedies: string;
+  whenToSeeDoctor: string;
 }
 
 export interface FollowUpQuestion {
@@ -20,47 +27,51 @@ export interface FollowUpQuestion {
 }
 
 /**
- * Analyzes user symptoms and matches them to conditions in the database
+ * Analyzes user symptoms using OpenAI's medical knowledge
  */
 export async function analyzeSymptoms(
   userSymptoms: string,
-  conditions: any[],
   previousAnswers?: Record<string, string>
 ): Promise<SymptomAnalysisResult[]> {
   try {
-    // Create a condensed version of conditions data for the AI to analyze
-    const conditionsData = conditions.map(c => ({
-      name: c.condition_name,
-      symptoms: c.symptoms?.slice(0, 500), // Limit length
-      overview: c.overview?.slice(0, 300)
-    }));
-
-    const prompt = `You are a medical symptom analyzer. Analyze the following user symptoms and match them to the most likely conditions from the provided medical database.
+    const prompt = `You are an expert medical AI assistant. Analyze the following symptoms and provide the most likely medical conditions.
 
 User Symptoms: ${userSymptoms}
-${previousAnswers ? `\nPrevious Answers: ${JSON.stringify(previousAnswers)}` : ''}
-
-Medical Conditions Database (sample of ${conditions.length} conditions):
-${JSON.stringify(conditionsData.slice(0, 50))}
-... and ${Math.max(0, conditions.length - 50)} more conditions
+${previousAnswers ? `\nAdditional Information: ${JSON.stringify(previousAnswers)}` : ''}
 
 IMPORTANT INSTRUCTIONS:
-1. Return ONLY a valid JSON array of matches (no markdown, no extra text)
-2. Each match must have: conditionName (exact match from database), confidence (0-100), matchingSymptoms (array), reasoning
-3. Order by confidence (highest first)
-4. Include top 5-10 most relevant matches
-5. Be conservative with confidence scores
-6. Consider symptom severity and combinations
+1. Identify 5-8 most likely medical conditions based on the symptoms
+2. Order by likelihood (highest confidence first)
+3. For EACH condition, provide comprehensive information
+4. Be conservative with confidence scores (realistic medical assessment)
+5. Include practical medical advice
+6. Return ONLY valid JSON (no markdown, no code blocks, no extra text)
 
-Return JSON array format:
-[{"conditionName": "...", "confidence": 85, "matchingSymptoms": [...], "reasoning": "..."}]`;
+Return this EXACT JSON structure:
+[
+  {
+    "conditionName": "Name of the condition",
+    "confidence": 75,
+    "matchingSymptoms": ["symptom1", "symptom2"],
+    "reasoning": "Brief explanation of why this condition matches",
+    "overview": "2-3 paragraph overview of the condition",
+    "symptoms": "Complete list of common symptoms with descriptions",
+    "causes": "Common causes and risk factors",
+    "diagnosis": "How this condition is typically diagnosed",
+    "treatment": "Standard treatment approaches and medications",
+    "homeRemedies": "Self-care measures and lifestyle recommendations",
+    "whenToSeeDoctor": "Warning signs that require immediate medical attention"
+  }
+]
+
+Be thorough but concise. Each field should be informative and medically accurate.`;
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
-          content: 'You are a medical AI assistant that analyzes symptoms and matches them to medical conditions. Always return valid JSON only, no markdown formatting.'
+          content: 'You are an expert medical AI that provides comprehensive condition analysis. Always return valid JSON only. Be medically accurate, thorough, and practical.'
         },
         {
           role: 'user',
@@ -68,7 +79,7 @@ Return JSON array format:
         }
       ],
       temperature: 0.3,
-      max_tokens: 2000
+      max_tokens: 4000
     });
 
     const content = response.choices[0]?.message?.content?.trim() || '[]';
@@ -81,14 +92,7 @@ Return JSON array format:
 
     const results = JSON.parse(jsonContent) as SymptomAnalysisResult[];
 
-    // Filter to only include conditions that exist in our database
-    const validResults = results.filter(r =>
-      conditions.some(c =>
-        c.condition_name.toLowerCase() === r.conditionName.toLowerCase()
-      )
-    );
-
-    return validResults.slice(0, 10); // Return top 10
+    return results.slice(0, 8); // Return top 8
   } catch (error) {
     console.error('Error analyzing symptoms:', error);
     throw new Error('Failed to analyze symptoms. Please try again.');

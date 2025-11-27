@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Brain, Loader2, ChevronRight, AlertCircle, CheckCircle2, HelpCircle } from "lucide-react";
+import { Brain, Loader2, ChevronRight, AlertCircle, CheckCircle2, HelpCircle, Stethoscope, Heart, Home, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,7 +13,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import medicalDatabase from "@/data/medical_conditions_complete_database_FIXED.json";
 import {
   analyzeSymptoms,
   generateFollowUpQuestions,
@@ -21,31 +20,6 @@ import {
   type SymptomAnalysisResult,
   type FollowUpQuestion,
 } from "@/services/symptomAnalyzer";
-
-interface MedicalCondition {
-  condition_name: string;
-  overview: string;
-  symptoms: string;
-  causes_and_risk_factors: string;
-  diagnosis: string;
-  treatment: string;
-  home_remedies_and_lifestyle: string;
-  exercises: string;
-  category: string;
-  image_url: string;
-  image_attribution: string;
-}
-
-interface MedicalDatabase {
-  database_info: {
-    name: string;
-    version: string;
-    total_conditions: number;
-    last_updated: string;
-    description: string;
-  };
-  conditions: MedicalCondition[];
-}
 
 type Step = 'input' | 'analyzing' | 'follow-up' | 'results';
 
@@ -59,8 +33,6 @@ export const SymptomChecker = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCondition, setSelectedCondition] = useState<string | null>(null);
-
-  const database = medicalDatabase as MedicalDatabase;
 
   const handleAnalyzeSymptoms = async () => {
     if (!symptomInput.trim()) {
@@ -77,11 +49,8 @@ export const SymptomChecker = () => {
       const symptoms = await extractSymptoms(symptomInput);
       setExtractedSymptoms(symptoms);
 
-      // Analyze symptoms and match to conditions
-      const results = await analyzeSymptoms(
-        symptomInput,
-        database.conditions
-      );
+      // Analyze symptoms using OpenAI's medical knowledge
+      const results = await analyzeSymptoms(symptomInput);
 
       setAnalysisResults(results);
 
@@ -115,7 +84,6 @@ export const SymptomChecker = () => {
       // Re-analyze with follow-up answers
       const updatedResults = await analyzeSymptoms(
         symptomInput,
-        database.conditions,
         followUpAnswers
       );
       setAnalysisResults(updatedResults);
@@ -144,36 +112,6 @@ export const SymptomChecker = () => {
     setSelectedCondition(null);
   };
 
-  const getFullConditionDetails = (conditionName: string): MedicalCondition | undefined => {
-    return database.conditions.find(
-      c => c.condition_name.toLowerCase() === conditionName.toLowerCase()
-    );
-  };
-
-  const formatText = (text: string): JSX.Element => {
-    if (!text) return <></>;
-
-    const parts = text.split(/(\*\*.*?\*\*)/g);
-
-    return (
-      <>
-        {parts.map((part, index) => {
-          if (part.startsWith('**') && part.endsWith('**')) {
-            const boldText = part.slice(2, -2);
-            return <strong key={index} className="font-semibold text-foreground">{boldText}</strong>;
-          } else {
-            return part.split('\\n').map((line, lineIndex, arr) => (
-              <span key={`${index}-${lineIndex}`}>
-                {line}
-                {lineIndex < arr.length - 1 && <br />}
-              </span>
-            ));
-          }
-        })}
-      </>
-    );
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -186,7 +124,7 @@ export const SymptomChecker = () => {
             <div>
               <CardTitle className="text-2xl">AI Symptom Checker</CardTitle>
               <CardDescription>
-                Describe your symptoms and get AI-powered condition matches
+                Powered by OpenAI - Describe your symptoms and get comprehensive medical insights
               </CardDescription>
             </div>
           </div>
@@ -265,7 +203,7 @@ export const SymptomChecker = () => {
               <div className="text-center space-y-2">
                 <p className="text-lg font-medium">Analyzing your symptoms...</p>
                 <p className="text-sm text-muted-foreground">
-                  Our AI is matching your symptoms with our medical database
+                  OpenAI is analyzing your symptoms using comprehensive medical knowledge
                 </p>
               </div>
             </div>
@@ -419,9 +357,6 @@ export const SymptomChecker = () => {
 
               <div className="space-y-3">
                 {analysisResults.map((result, idx) => {
-                  const condition = getFullConditionDetails(result.conditionName);
-                  if (!condition) return null;
-
                   const confidenceColor =
                     result.confidence >= 70
                       ? 'text-green-600 dark:text-green-400'
@@ -433,15 +368,15 @@ export const SymptomChecker = () => {
                     <Card
                       key={idx}
                       className={`cursor-pointer transition-all hover:shadow-md ${
-                        selectedCondition === condition.condition_name
+                        selectedCondition === result.conditionName
                           ? 'ring-2 ring-primary'
                           : ''
                       }`}
                       onClick={() =>
                         setSelectedCondition(
-                          selectedCondition === condition.condition_name
+                          selectedCondition === result.conditionName
                             ? null
-                            : condition.condition_name
+                            : result.conditionName
                         )
                       }
                     >
@@ -453,13 +388,8 @@ export const SymptomChecker = () => {
                                 {idx + 1}
                               </span>
                               <CardTitle className="text-xl">
-                                {condition.condition_name}
+                                {result.conditionName}
                               </CardTitle>
-                              {condition.category && (
-                                <Badge variant="outline" className="text-xs">
-                                  {condition.category}
-                                </Badge>
-                              )}
                             </div>
                             <div className="space-y-2">
                               <div className="flex items-center gap-2">
@@ -491,53 +421,107 @@ export const SymptomChecker = () => {
                             <Label className="text-xs font-medium text-muted-foreground">
                               AI Reasoning:
                             </Label>
-                            <p className="text-sm mt-1">{result.reasoning}</p>
+                            <p className="text-sm mt-1 whitespace-pre-line">{result.reasoning}</p>
                           </div>
                         </div>
                       </CardHeader>
 
-                      {selectedCondition === condition.condition_name && (
+                      {selectedCondition === result.conditionName && (
                         <CardContent className="pt-0">
                           <Accordion type="single" collapsible className="w-full">
-                            {condition.overview && (
+                            {result.overview && (
                               <AccordionItem value="overview">
-                                <AccordionTrigger>Overview</AccordionTrigger>
+                                <AccordionTrigger className="flex items-center gap-2">
+                                  <Brain className="h-4 w-4" />
+                                  <span>Overview</span>
+                                </AccordionTrigger>
                                 <AccordionContent>
-                                  <div className="text-muted-foreground leading-relaxed">
-                                    {formatText(condition.overview)}
+                                  <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {result.overview}
                                   </div>
                                 </AccordionContent>
                               </AccordionItem>
                             )}
 
-                            {condition.symptoms && (
+                            {result.symptoms && (
                               <AccordionItem value="symptoms">
-                                <AccordionTrigger>All Symptoms</AccordionTrigger>
+                                <AccordionTrigger className="flex items-center gap-2">
+                                  <AlertCircle className="h-4 w-4" />
+                                  <span>Complete Symptom List</span>
+                                </AccordionTrigger>
                                 <AccordionContent>
-                                  <div className="text-muted-foreground leading-relaxed">
-                                    {formatText(condition.symptoms)}
+                                  <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {result.symptoms}
                                   </div>
                                 </AccordionContent>
                               </AccordionItem>
                             )}
 
-                            {condition.causes_and_risk_factors && (
+                            {result.causes && (
                               <AccordionItem value="causes">
-                                <AccordionTrigger>Causes & Risk Factors</AccordionTrigger>
+                                <AccordionTrigger className="flex items-center gap-2">
+                                  <HelpCircle className="h-4 w-4" />
+                                  <span>Causes & Risk Factors</span>
+                                </AccordionTrigger>
                                 <AccordionContent>
-                                  <div className="text-muted-foreground leading-relaxed">
-                                    {formatText(condition.causes_and_risk_factors)}
+                                  <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {result.causes}
                                   </div>
                                 </AccordionContent>
                               </AccordionItem>
                             )}
 
-                            {condition.treatment && (
-                              <AccordionItem value="treatment">
-                                <AccordionTrigger>Treatment</AccordionTrigger>
+                            {result.diagnosis && (
+                              <AccordionItem value="diagnosis">
+                                <AccordionTrigger className="flex items-center gap-2">
+                                  <Stethoscope className="h-4 w-4" />
+                                  <span>Diagnosis</span>
+                                </AccordionTrigger>
                                 <AccordionContent>
-                                  <div className="text-muted-foreground leading-relaxed">
-                                    {formatText(condition.treatment)}
+                                  <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {result.diagnosis}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            )}
+
+                            {result.treatment && (
+                              <AccordionItem value="treatment">
+                                <AccordionTrigger className="flex items-center gap-2">
+                                  <Heart className="h-4 w-4" />
+                                  <span>Treatment Options</span>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {result.treatment}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            )}
+
+                            {result.homeRemedies && (
+                              <AccordionItem value="remedies">
+                                <AccordionTrigger className="flex items-center gap-2">
+                                  <Home className="h-4 w-4" />
+                                  <span>Home Care & Self-Management</span>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {result.homeRemedies}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            )}
+
+                            {result.whenToSeeDoctor && (
+                              <AccordionItem value="warning">
+                                <AccordionTrigger className="flex items-center gap-2">
+                                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                                  <span className="text-red-600 dark:text-red-400">When to Seek Medical Care</span>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="text-red-700 dark:text-red-300 leading-relaxed whitespace-pre-line bg-red-50 dark:bg-red-950/20 p-4 rounded-lg">
+                                    {result.whenToSeeDoctor}
                                   </div>
                                 </AccordionContent>
                               </AccordionItem>
