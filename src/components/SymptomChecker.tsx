@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Brain, Loader2, ChevronRight, AlertCircle, CheckCircle2, HelpCircle, Stethoscope, Heart, Home, AlertTriangle, Dumbbell } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Brain, Loader2, ChevronRight, AlertCircle, CheckCircle2, HelpCircle, Stethoscope, Heart, Home, AlertTriangle, Dumbbell, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -16,7 +16,7 @@ import {
 import {
   analyzeSymptoms,
   generateFollowUpQuestions,
-  extractSymptoms,
+  getSymptomSuggestions,
   type SymptomAnalysisResult,
   type FollowUpQuestion,
 } from "@/services/symptomAnalyzer";
@@ -26,17 +26,75 @@ type Step = 'input' | 'analyzing' | 'follow-up' | 'results';
 export const SymptomChecker = () => {
   const [step, setStep] = useState<Step>('input');
   const [symptomInput, setSymptomInput] = useState('');
-  const [extractedSymptoms, setExtractedSymptoms] = useState<string[]>([]);
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<SymptomAnalysisResult[]>([]);
   const [followUpQuestions, setFollowUpQuestions] = useState<FollowUpQuestion[]>([]);
   const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCondition, setSelectedCondition] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Debounce symptom input for autocomplete
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (symptomInput.trim().length >= 2) {
+        setLoadingSuggestions(true);
+        try {
+          const symptomSuggestions = await getSymptomSuggestions(symptomInput);
+          setSuggestions(symptomSuggestions);
+          setShowSuggestions(true);
+        } catch (error) {
+          console.error('Error getting suggestions:', error);
+        } finally {
+          setLoadingSuggestions(false);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [symptomInput]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target as Node) &&
+        !inputRef.current?.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const addSymptom = (symptom: string) => {
+    if (!selectedSymptoms.includes(symptom)) {
+      setSelectedSymptoms([...selectedSymptoms, symptom]);
+    }
+    setSymptomInput('');
+    setSuggestions([]);
+    setShowSuggestions(false);
+    inputRef.current?.focus();
+  };
+
+  const removeSymptom = (symptom: string) => {
+    setSelectedSymptoms(selectedSymptoms.filter(s => s !== symptom));
+  };
 
   const handleAnalyzeSymptoms = async () => {
-    if (!symptomInput.trim()) {
-      setError('Please describe your symptoms');
+    if (selectedSymptoms.length === 0) {
+      setError('Please add at least one symptom');
       return;
     }
 
@@ -45,18 +103,17 @@ export const SymptomChecker = () => {
     setStep('analyzing');
 
     try {
-      // Extract symptoms using AI
-      const symptoms = await extractSymptoms(symptomInput);
-      setExtractedSymptoms(symptoms);
+      // Combine selected symptoms into a description
+      const symptomsDescription = selectedSymptoms.join(', ');
 
       // Analyze symptoms using OpenAI's medical knowledge
-      const results = await analyzeSymptoms(symptomInput);
+      const results = await analyzeSymptoms(symptomsDescription);
 
       setAnalysisResults(results);
 
       // Generate follow-up questions if we have results
       if (results.length > 0) {
-        const questions = await generateFollowUpQuestions(symptomInput, results);
+        const questions = await generateFollowUpQuestions(symptomsDescription, results);
         if (questions.length > 0) {
           setFollowUpQuestions(questions);
           setStep('follow-up');
@@ -64,7 +121,7 @@ export const SymptomChecker = () => {
           setStep('results');
         }
       } else {
-        setError('No matching conditions found. Please try describing your symptoms differently.');
+        setError('No matching conditions found. Please try different symptoms.');
         setStep('input');
       }
     } catch (err) {
@@ -82,8 +139,9 @@ export const SymptomChecker = () => {
 
     try {
       // Re-analyze with follow-up answers
+      const symptomsDescription = selectedSymptoms.join(', ');
       const updatedResults = await analyzeSymptoms(
-        symptomInput,
+        symptomsDescription,
         followUpAnswers
       );
       setAnalysisResults(updatedResults);
@@ -104,7 +162,9 @@ export const SymptomChecker = () => {
   const handleStartOver = () => {
     setStep('input');
     setSymptomInput('');
-    setExtractedSymptoms([]);
+    setSelectedSymptoms([]);
+    setSuggestions([]);
+    setShowSuggestions(false);
     setAnalysisResults([]);
     setFollowUpQuestions([]);
     setFollowUpAnswers({});
@@ -154,24 +214,88 @@ export const SymptomChecker = () => {
               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm">
                 1
               </span>
-              Describe Your Symptoms
+              What are your symptoms?
             </CardTitle>
             <CardDescription>
-              Tell us what you're experiencing. Be as specific as possible about your symptoms, when they started, and their severity.
+              Start typing a symptom and select from the suggestions. Add multiple symptoms for more accurate results.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Textarea
-              placeholder="Example: I've had a persistent headache for 3 days, along with fever and fatigue. The headache is mostly on the right side..."
-              value={symptomInput}
-              onChange={(e) => setSymptomInput(e.target.value)}
-              rows={6}
-              className="resize-none"
-            />
+            {/* Symptom Input with Autocomplete */}
+            <div className="relative">
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder="Type a symptom (e.g., headache, fever, cough)..."
+                value={symptomInput}
+                onChange={(e) => setSymptomInput(e.target.value)}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                className="h-12"
+              />
+
+              {/* Autocomplete Suggestions Dropdown */}
+              {showSuggestions && (symptomInput.length >= 2) && (
+                <div
+                  ref={suggestionsRef}
+                  className="absolute z-50 w-full mt-1 bg-background border rounded-lg shadow-lg max-h-80 overflow-y-auto"
+                >
+                  {loadingSuggestions ? (
+                    <div className="p-4 text-center">
+                      <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground mt-2">Finding symptoms...</p>
+                    </div>
+                  ) : suggestions.length > 0 ? (
+                    <div className="py-2">
+                      {suggestions.map((suggestion, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => addSymptom(suggestion)}
+                          className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-center justify-between group"
+                        >
+                          <span className="text-sm">{suggestion}</span>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                            ADD
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                      No symptoms found. Try different words.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Selected Symptoms Display */}
+            {selectedSymptoms.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Your Symptoms:</Label>
+                <div className="flex flex-wrap gap-2">
+                  {selectedSymptoms.map((symptom, idx) => (
+                    <Badge
+                      key={idx}
+                      variant="secondary"
+                      className="text-sm py-1.5 px-3 pr-1 flex items-center gap-1"
+                    >
+                      {symptom}
+                      <button
+                        onClick={() => removeSymptom(symptom)}
+                        className="ml-1 hover:bg-destructive/20 rounded-full p-0.5 transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="flex gap-2">
               <Button
                 onClick={handleAnalyzeSymptoms}
-                disabled={!symptomInput.trim() || loading}
+                disabled={selectedSymptoms.length === 0 || loading}
                 className="flex-1"
               >
                 {loading ? (
@@ -226,14 +350,14 @@ export const SymptomChecker = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {extractedSymptoms.length > 0 && (
+            {selectedSymptoms.length > 0 && (
               <div>
                 <Label className="text-sm font-medium mb-2 flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-green-600" />
-                  Detected Symptoms:
+                  Your Symptoms:
                 </Label>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {extractedSymptoms.map((symptom, idx) => (
+                  {selectedSymptoms.map((symptom, idx) => (
                     <Badge key={idx} variant="secondary">
                       {symptom}
                     </Badge>
@@ -342,11 +466,11 @@ export const SymptomChecker = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {extractedSymptoms.length > 0 && (
+              {selectedSymptoms.length > 0 && (
                 <div className="p-3 bg-muted rounded-lg">
                   <Label className="text-sm font-medium mb-2 block">Your Symptoms:</Label>
                   <div className="flex flex-wrap gap-2">
-                    {extractedSymptoms.map((symptom, idx) => (
+                    {selectedSymptoms.map((symptom, idx) => (
                       <Badge key={idx} variant="secondary">
                         {symptom}
                       </Badge>

@@ -193,3 +193,53 @@ Return only the JSON array, e.g.: ["headache", "fever", "nausea"]`;
     return [];
   }
 }
+
+/**
+ * Gets symptom suggestions based on partial input (for autocomplete)
+ */
+export async function getSymptomSuggestions(partialInput: string): Promise<string[]> {
+  if (!partialInput || partialInput.length < 2) {
+    return [];
+  }
+
+  try {
+    const prompt = `The user is typing a symptom starting with "${partialInput}". Suggest 8-10 common, specific medical symptoms that match this input.
+
+Examples:
+- If input is "head", suggest: "headache", "headache in front of head", "headache on one side of head", "head injury", "head pressure", etc.
+- If input is "chest", suggest: "chest pain", "chest tightness", "chest pressure", "chest discomfort when breathing", etc.
+
+Return ONLY a JSON array of symptom strings: ["symptom1", "symptom2", ...]
+
+Be specific and medically accurate. Focus on common symptoms people search for.`;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a medical symptom autocomplete assistant. Return only valid JSON arrays of symptom suggestions.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.5,
+      max_tokens: 300
+    });
+
+    const content = response.choices[0]?.message?.content?.trim() || '[]';
+
+    // Remove markdown code blocks if present
+    let jsonContent = content;
+    if (content.startsWith('```')) {
+      jsonContent = content.replace(/```json?\n?/g, '').replace(/```\n?$/g, '').trim();
+    }
+
+    return JSON.parse(jsonContent) as string[];
+  } catch (error) {
+    console.error('Error getting symptom suggestions:', error);
+    return [];
+  }
+}
