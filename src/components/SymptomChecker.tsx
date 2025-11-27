@@ -552,6 +552,77 @@ export const SymptomChecker = () => {
 
                       {selectedCondition === result.conditionName && (
                         <CardContent className="pt-0">
+                          {/* Quick Overview Sections */}
+                          <div className="mb-6 space-y-4 pb-4 border-b">
+                            {/* Causes Summary */}
+                            {result.causesSummary && result.causesSummary.length > 0 && (
+                              <div>
+                                <Label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                                  <HelpCircle className="h-4 w-4 text-blue-600" />
+                                  Common Causes:
+                                </Label>
+                                <ul className="space-y-1 ml-6">
+                                  {result.causesSummary.map((cause, cIdx) => (
+                                    <li key={cIdx} className="text-sm text-muted-foreground list-disc">
+                                      {cause}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Risk Factors Summary */}
+                            {result.riskFactorsSummary && result.riskFactorsSummary.length > 0 && (
+                              <div>
+                                <Label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                                  <AlertCircle className="h-4 w-4 text-orange-600" />
+                                  Risk Factors:
+                                </Label>
+                                <ul className="space-y-1 ml-6">
+                                  {result.riskFactorsSummary.map((factor, fIdx) => (
+                                    <li key={fIdx} className="text-sm text-muted-foreground list-disc">
+                                      {factor}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Home Remedies Summary */}
+                            {result.homeRemediesSummary && result.homeRemediesSummary.length > 0 && (
+                              <div>
+                                <Label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                                  <Home className="h-4 w-4 text-green-600" />
+                                  Quick Home Remedies:
+                                </Label>
+                                <ul className="space-y-1 ml-6">
+                                  {result.homeRemediesSummary.map((remedy, rIdx) => (
+                                    <li key={rIdx} className="text-sm text-muted-foreground list-disc">
+                                      {remedy}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Exercises Summary */}
+                            {result.exercisesSummary && result.exercisesSummary.length > 0 && (
+                              <div>
+                                <Label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                                  <Dumbbell className="h-4 w-4 text-purple-600" />
+                                  Recommended Exercises:
+                                </Label>
+                                <ul className="space-y-1 ml-6">
+                                  {result.exercisesSummary.map((exercise, eIdx) => (
+                                    <li key={eIdx} className="text-sm text-muted-foreground list-disc">
+                                      {exercise}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+
                           <Accordion type="single" collapsible className="w-full">
                             {result.overview && (
                               <AccordionItem value="overview">

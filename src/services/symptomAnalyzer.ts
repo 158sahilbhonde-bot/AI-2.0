@@ -14,10 +14,14 @@ export interface SymptomAnalysisResult {
   overview: string;
   symptoms: string;
   causes: string;
+  causesSummary: string[]; // Key causes (3-5 items)
+  riskFactorsSummary: string[]; // Key risk factors (3-5 items)
   diagnosis: string;
   treatment: string;
   homeRemedies: string;
+  homeRemediesSummary: string[]; // Key remedies (3-5 items)
   exercises: string;
+  exercisesSummary: string[]; // Key exercises (3-5 items)
   whenToSeeDoctor: string;
 }
 
@@ -58,13 +62,23 @@ Return this EXACT JSON structure:
     "overview": "2-3 paragraph overview of the condition",
     "symptoms": "Complete list of common symptoms with descriptions",
     "causes": "Common causes and risk factors",
+    "causesSummary": ["Main cause 1", "Main cause 2", "Main cause 3"],
+    "riskFactorsSummary": ["Risk factor 1", "Risk factor 2", "Risk factor 3"],
     "diagnosis": "How this condition is typically diagnosed",
     "treatment": "Standard medical treatments and medications. MUST start with 'Consult your doctor for proper diagnosis and treatment.' Include both medical and general treatment approaches.",
     "homeRemedies": "Practical home remedies, self-care measures, lifestyle changes, and dietary recommendations. Start with 'While consulting a doctor is important, these home remedies may help:'",
+    "homeRemediesSummary": ["Key remedy 1", "Key remedy 2", "Key remedy 3"],
     "exercises": "Recommended exercises, stretches, physical therapy activities, and movement recommendations. Start with 'After consulting your healthcare provider, consider these exercises:' Include safety precautions.",
+    "exercisesSummary": ["Key exercise 1", "Key exercise 2", "Key exercise 3"],
     "whenToSeeDoctor": "Clear warning signs and situations requiring immediate medical attention. Be specific about emergency symptoms."
   }
 ]
+
+IMPORTANT for summary fields:
+- causesSummary: 3-5 main causes (concise, one-line each)
+- riskFactorsSummary: 3-5 key risk factors (concise, one-line each)
+- homeRemediesSummary: 3-5 practical home remedies (actionable, one-line each)
+- exercisesSummary: 3-5 specific exercises or physical therapy activities (clear, one-line each)
 
 Be thorough, practical, and medically accurate. Each field should provide actionable information while emphasizing professional medical consultation.`;
 
