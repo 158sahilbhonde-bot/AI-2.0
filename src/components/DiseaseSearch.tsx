@@ -1,16 +1,10 @@
-import { useState, useMemo, useEffect } from "react";
-import { Search, Activity, Stethoscope, Heart, Dumbbell, Home, AlertCircle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search, Activity, Stethoscope, Heart, Dumbbell, Home, AlertCircle, Loader2, Brain } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import medicalDatabase from "@/data/medical_conditions_complete_database_FIXED.json";
+import { Button } from "@/components/ui/button";
 
-interface MedicalCondition {
+interface DiseaseInfo {
   condition_name: string;
   overview: string;
   symptoms: string;
@@ -19,257 +13,432 @@ interface MedicalCondition {
   treatment: string;
   home_remedies_and_lifestyle: string;
   exercises: string;
-  category: string;
-  image_url: string;
-  image_attribution: string;
 }
-
-interface MedicalDatabase {
-  database_info: {
-    name: string;
-    version: string;
-    total_conditions: number;
-    last_updated: string;
-    description: string;
-  };
-  conditions: MedicalCondition[];
-}
-
-// Utility function to format text with bold and line breaks
-const formatText = (text: string): JSX.Element => {
-  if (!text) return <></>;
-  
-  // Replace \n with actual line breaks and handle bold text
-  const parts = text.split(/(\*\*.*?\*\*)/g);
-  
-  return (
-    <>
-      {parts.map((part, index) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
-          // Bold text
-          const boldText = part.slice(2, -2);
-          return <strong key={index} className="font-semibold text-foreground">{boldText}</strong>;
-        } else {
-          // Regular text with line breaks
-          return part.split('\\n').map((line, lineIndex, arr) => (
-            <span key={`${index}-${lineIndex}`}>
-              {line}
-              {lineIndex < arr.length - 1 && <br />}
-            </span>
-          ));
-        }
-      })}
-    </>
-  );
-};
 
 export const DiseaseSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const database = medicalDatabase as MedicalDatabase;
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [diseaseInfo, setDiseaseInfo] = useState<DiseaseInfo | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Debounce search input for better performance
+  // Fetch suggestions as user types
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 300); // 300ms delay
+    const fetchSuggestions = async () => {
+      if (searchTerm.trim().length < 2) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
 
-    return () => clearTimeout(timer);
+      setIsSuggestionsLoading(true);
+
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4.1",
+            messages: [
+              {
+                role: "system",
+                content: "You are a medical conditions autocomplete assistant. Return only a JSON array of matching medical condition names."
+              },
+              {
+                role: "user",
+                content: `List up to 8 medical conditions, diseases, or health issues that start with or contain "${searchTerm}". Return ONLY a JSON array of strings, nothing else. Example: ["condition 1", "condition 2"]. If no conditions match, return an empty array [].`
+              }
+            ],
+            temperature: 0.1,
+            max_completion_tokens: 500,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch suggestions");
+        }
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content;
+
+        if (content) {
+          const cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          const parsed = JSON.parse(cleanedContent);
+          if (Array.isArray(parsed)) {
+            setSuggestions(parsed);
+            setShowSuggestions(true);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching suggestions:", err);
+        setSuggestions([]);
+      } finally {
+        setIsSuggestionsLoading(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(debounceTimer);
   }, [searchTerm]);
 
-  // Optimized search - only searches in condition_name
-  const filteredConditions = useMemo(() => {
-    if (!debouncedSearchTerm.trim()) return [];
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current && 
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const searchDisease = async (term?: string) => {
+    const searchQuery = term || searchTerm;
+    if (!searchQuery.trim()) return;
+
+    setShowSuggestions(false);
+    setIsLoading(true);
+    setError(null);
+    setDiseaseInfo(null);
+
+    const prompt = `You are a medical information assistant. Provide comprehensive, accurate, and detailed information about the medical condition: "${searchQuery}".
+
+Please respond in the following JSON format only (no markdown, no code blocks, just pure JSON):
+{
+  "condition_name": "Official name of the condition",
+  "overview": "A comprehensive overview of the condition (2-3 paragraphs)",
+  "symptoms": "Detailed list and description of all symptoms associated with this condition",
+  "causes_and_risk_factors": "Complete information about causes, risk factors, and who is most likely to develop this condition",
+  "diagnosis": "How this condition is diagnosed, including tests, examinations, and diagnostic criteria",
+  "treatment": "All treatment options including medications, procedures, and therapies",
+  "home_remedies_and_lifestyle": "Home care tips, lifestyle modifications, dietary recommendations, and self-care strategies",
+  "exercises": "Recommended exercises, physical therapy options, and activity guidelines"
+}
+
+If the condition is not recognized or doesn't exist, respond with:
+{
+  "error": "Condition not found or not recognized as a medical condition"
+}
+
+Provide thorough, medically accurate information. Include specific details, not just general statements.`;
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4.1",
+          messages: [
+            {
+              role: "system",
+              content: "You are a knowledgeable medical information assistant. Provide accurate, comprehensive, and helpful health information. Always encourage users to consult healthcare professionals for personal medical advice."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 4000,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `API request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices[0]?.message?.content;
+
+      if (!content) {
+        throw new Error("No response received from API");
+      }
+
+      // Parse the JSON response
+      const cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const parsedInfo = JSON.parse(cleanedContent);
+
+      if (parsedInfo.error) {
+        setError(parsedInfo.error);
+      } else {
+        setDiseaseInfo(parsedInfo);
+      }
+    } catch (err) {
+      console.error("Error fetching disease info:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch disease information. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || suggestions.length === 0) {
+      if (e.key === "Enter") {
+        searchDisease();
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedIndex(prev => 
+          prev < suggestions.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+          handleSuggestionClick(suggestions[selectedIndex]);
+        } else {
+          searchDisease();
+        }
+        break;
+      case "Escape":
+        setShowSuggestions(false);
+        setSelectedIndex(-1);
+        break;
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchTerm(suggestion);
+    setShowSuggestions(false);
+    setSelectedIndex(-1);
+    searchDisease(suggestion);
+  };
+
+  const InfoSection = ({ 
+    icon: Icon, 
+    title, 
+    content 
+  }: { 
+    icon: React.ElementType; 
+    title: string; 
+    content: string;
+  }) => {
+    if (!content) return null;
     
-    const term = debouncedSearchTerm.toLowerCase();
-    return database.conditions.filter((condition) =>
-      condition.condition_name.toLowerCase().includes(term)
+    return (
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Icon className="h-5 w-5 text-primary" />
+          </div>
+          <h4 className="text-lg font-semibold text-foreground">{title}</h4>
+        </div>
+        <div className="text-muted-foreground leading-relaxed pl-11 whitespace-pre-line">
+          {content}
+        </div>
+      </div>
     );
-  }, [debouncedSearchTerm]);
+  };
 
   return (
     <div className="space-y-6">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Search by condition name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 h-12 text-lg"
-        />
-      </div>
-
-      {debouncedSearchTerm.trim() && (
-        <div className="text-sm text-muted-foreground">
-          Found {filteredConditions.length} condition{filteredConditions.length !== 1 ? 's' : ''} 
-          {filteredConditions.length > 0 && ` matching "${debouncedSearchTerm}"`}
-        </div>
-      )}
-
-      {debouncedSearchTerm.trim() && (
-        <div className="space-y-4">
-          {filteredConditions.length > 0 ? (
-            filteredConditions.map((condition, index) => (
-              <Card key={index} className="overflow-hidden">
-                {condition.image_url && (
-                  <div className="relative h-48 bg-gradient-to-br from-primary/10 to-accent/10">
-                    <img
-                      src={condition.image_url}
-                      alt={condition.condition_name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-                
-                <div className="p-6">
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <h3 className="text-2xl font-bold text-primary">
-                      {condition.condition_name}
-                    </h3>
-                    {condition.category && (
-                      <span className="shrink-0 text-xs font-semibold px-3 py-1 bg-secondary text-secondary-foreground rounded-full">
-                        {condition.category}
-                      </span>
-                    )}
-                  </div>
-
-                  {condition.overview && (
-                    <div className="text-muted-foreground mb-6 leading-relaxed">
-                      {formatText(condition.overview)}
-                    </div>
-                  )}
-
-                  <Accordion type="single" collapsible className="w-full">
-                    {condition.symptoms && (
-                      <AccordionItem value="symptoms">
-                        <AccordionTrigger className="text-left hover:text-primary">
-                          <div className="flex items-center gap-2">
-                            <Activity className="h-4 w-4" />
-                            <span className="font-semibold">Symptoms</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="text-muted-foreground leading-relaxed pt-2">
-                            {formatText(condition.symptoms)}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    )}
-
-                    {condition.causes_and_risk_factors && (
-                      <AccordionItem value="causes">
-                        <AccordionTrigger className="text-left hover:text-primary">
-                          <div className="flex items-center gap-2">
-                            <AlertCircle className="h-4 w-4" />
-                            <span className="font-semibold">Causes & Risk Factors</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="text-muted-foreground leading-relaxed pt-2">
-                            {formatText(condition.causes_and_risk_factors)}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    )}
-
-                    {condition.diagnosis && (
-                      <AccordionItem value="diagnosis">
-                        <AccordionTrigger className="text-left hover:text-primary">
-                          <div className="flex items-center gap-2">
-                            <Stethoscope className="h-4 w-4" />
-                            <span className="font-semibold">Diagnosis</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="text-muted-foreground leading-relaxed pt-2">
-                            {formatText(condition.diagnosis)}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    )}
-
-                    {condition.treatment && (
-                      <AccordionItem value="treatment">
-                        <AccordionTrigger className="text-left hover:text-primary">
-                          <div className="flex items-center gap-2">
-                            <Heart className="h-4 w-4" />
-                            <span className="font-semibold">Treatment</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="text-muted-foreground leading-relaxed pt-2">
-                            {formatText(condition.treatment)}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    )}
-
-                    {condition.home_remedies_and_lifestyle && (
-                      <AccordionItem value="remedies">
-                        <AccordionTrigger className="text-left hover:text-primary">
-                          <div className="flex items-center gap-2">
-                            <Home className="h-4 w-4" />
-                            <span className="font-semibold">Home Remedies & Lifestyle</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="text-muted-foreground leading-relaxed pt-2">
-                            {formatText(condition.home_remedies_and_lifestyle)}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    )}
-
-                    {condition.exercises && (
-                      <AccordionItem value="exercises">
-                        <AccordionTrigger className="text-left hover:text-primary">
-                          <div className="flex items-center gap-2">
-                            <Dumbbell className="h-4 w-4" />
-                            <span className="font-semibold">Exercises & Physical Therapy</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="text-muted-foreground leading-relaxed pt-2">
-                            {formatText(condition.exercises)}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    )}
-                  </Accordion>
-
-                  {condition.image_attribution && (
-                    <p className="text-xs text-muted-foreground mt-4 pt-4 border-t">
-                      Image: {condition.image_attribution}
-                    </p>
-                  )}
+      {/* Search Input with Autocomplete */}
+      <div className="flex gap-3">
+        <div ref={containerRef} className="relative flex-1" style={{ zIndex: 100 }}>
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+          <Input
+            ref={inputRef}
+            type="text"
+            placeholder="Enter a disease or condition name..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setSelectedIndex(-1);
+            }}
+            onKeyDown={handleKeyDown}
+            onFocus={() => {
+              if (suggestions.length > 0) {
+                setShowSuggestions(true);
+              }
+            }}
+            className="pl-10 h-12 text-lg"
+            disabled={isLoading}
+            autoComplete="off"
+          />
+          
+          {/* Suggestions Dropdown */}
+          {showSuggestions && (suggestions.length > 0 || isSuggestionsLoading) && (
+            <div 
+              ref={suggestionsRef}
+              className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-xl overflow-hidden"
+              style={{ zIndex: 9999 }}
+            >
+              {isSuggestionsLoading && suggestions.length === 0 ? (
+                <div className="p-3 text-sm text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Loading suggestions...
                 </div>
-              </Card>
-            ))
-          ) : (
-            <Card className="p-8 text-center">
-              <p className="text-muted-foreground">
-                No conditions found matching "{debouncedSearchTerm}"
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Try searching with different condition names or check your spelling
-              </p>
-            </Card>
+              ) : (
+                <ul className="py-1 max-h-[300px] overflow-y-auto">
+                  {suggestions.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className={`px-4 py-3 cursor-pointer text-sm transition-colors border-b border-border/50 last:border-b-0 ${
+                        index === selectedIndex
+                          ? "bg-primary/10 text-primary"
+                          : "hover:bg-muted"
+                      }`}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
         </div>
+        <Button 
+          onClick={() => searchDisease()} 
+          disabled={isLoading || !searchTerm.trim()}
+          className="h-12 px-6"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Searching...
+            </>
+          ) : (
+            "Search"
+          )}
+        </Button>
+      </div>
+
+      {/* Loading State */}
+      {isLoading && (
+        <Card className="p-8 text-center">
+          <Loader2 className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
+          <p className="text-muted-foreground text-lg mb-2">
+            Fetching comprehensive information...
+          </p>
+          <p className="text-sm text-muted-foreground">
+            This may take a few seconds
+          </p>
+        </Card>
       )}
 
-      {!debouncedSearchTerm.trim() && (
+      {/* Error State */}
+      {error && !isLoading && (
+        <Card className="p-8 text-center border-destructive/50">
+          <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <p className="text-destructive text-lg mb-2">
+            {error}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Please try a different search term or check your spelling
+          </p>
+        </Card>
+      )}
+
+      {/* Disease Information */}
+      {diseaseInfo && !isLoading && (
+        <Card className="overflow-hidden">
+          <div className="bg-gradient-to-br from-primary/10 to-accent/10 p-6">
+            <h3 className="text-2xl md:text-3xl font-bold text-primary">
+              {diseaseInfo.condition_name}
+            </h3>
+          </div>
+          
+          <div className="p-6">
+            {/* Overview */}
+            {diseaseInfo.overview && (
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Brain className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="text-lg font-semibold text-foreground">Overview</h4>
+                </div>
+                <div className="text-muted-foreground leading-relaxed pl-11 whitespace-pre-line">
+                  {diseaseInfo.overview}
+                </div>
+              </div>
+            )}
+
+            <div className="border-t pt-6">
+              <InfoSection 
+                icon={Activity} 
+                title="Symptoms" 
+                content={diseaseInfo.symptoms} 
+              />
+
+              <InfoSection 
+                icon={AlertCircle} 
+                title="Causes & Risk Factors" 
+                content={diseaseInfo.causes_and_risk_factors} 
+              />
+
+              <InfoSection 
+                icon={Stethoscope} 
+                title="Diagnosis" 
+                content={diseaseInfo.diagnosis} 
+              />
+
+              <InfoSection 
+                icon={Heart} 
+                title="Treatment" 
+                content={diseaseInfo.treatment} 
+              />
+
+              <InfoSection 
+                icon={Home} 
+                title="Home Remedies & Lifestyle" 
+                content={diseaseInfo.home_remedies_and_lifestyle} 
+              />
+
+              <InfoSection 
+                icon={Dumbbell} 
+                title="Exercises & Physical Therapy" 
+                content={diseaseInfo.exercises} 
+              />
+            </div>
+
+            {/* Disclaimer */}
+            <div className="mt-6 pt-6 border-t">
+              <p className="text-xs text-muted-foreground bg-muted/50 p-4 rounded-lg">
+                <strong>Disclaimer:</strong> This information is for educational purposes only and should not be considered medical advice. 
+                Always consult with a qualified healthcare professional for diagnosis and treatment of any medical condition.
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Initial State */}
+      {!searchTerm.trim() && !diseaseInfo && !isLoading && !error && (
         <Card className="p-8 text-center">
           <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground text-lg mb-2">
-            Search our comprehensive health database
+            Search for any medical condition
           </p>
           <p className="text-sm text-muted-foreground">
-            Find detailed information about {database.database_info.total_conditions}+ medical conditions, symptoms, treatments, and more
+            Get comprehensive information about symptoms, causes, diagnosis, treatment options, and more
           </p>
         </Card>
       )}

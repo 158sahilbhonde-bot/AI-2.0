@@ -57,7 +57,8 @@ const Home = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="bg-primary border-l-4 border-accent p-4 rounded-r-lg">
             <p className="text-sm md:text-base font-semibold text-white">
-              Note: Confidential and Private Property of MS International and Shah Happiness Foundation.
+              Important Notice: This website is currently in development and undergoing initial testing. Please refrain from using any information provided here for decision-making, as it may not be accurate or validated.
+              This website is the property of MS International and the Shah Happiness Foundation.
             </p>
           </div>
         </div>

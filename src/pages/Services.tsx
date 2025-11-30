@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import ConfidentialBanner from "@/components/ConfidentialBanner";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Stethoscope,
   Heart,
@@ -16,6 +18,7 @@ import {
   CheckCircle,
   BookOpen,
   Search,
+  UserCheck,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
@@ -25,11 +28,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { DiseaseSearch } from "@/components/DiseaseSearch";
+import { SymptomChecker } from "@/components/SymptomChecker";
 
 import { commonDiseasesIndia } from "@/data/commonDiseases";
 
+type ActiveTool = "disease" | "symptom";
+
 const Services = () => {
   const { t } = useTranslation();
+  const [activeTool, setActiveTool] = useState<ActiveTool>("disease");
   
   const services = [
     {
@@ -173,22 +180,51 @@ const Services = () => {
         </div>
       </section>
 
-      {/* General Health Guidance Section */}
+      {/* Health Tools Section - Disease Search & Symptom Checker */}
       <section className="py-20 bg-gradient-to-br from-primary/5 to-accent/5">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Search className="h-8 w-8 text-primary" />
-              <h2 className="text-3xl lg:text-4xl font-bold">
-                {t('services.healthGuidanceTitle')}
-              </h2>
-            </div>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              {t('services.healthGuidanceTitle')}
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
               {t('services.healthGuidanceSubtitle')}
             </p>
+
+            {/* Toggle Buttons */}
+            <div className="flex justify-center gap-4 mb-8">
+              <Button
+                variant={activeTool === "disease" ? "default" : "outline"}
+                size="lg"
+                className="gap-2 min-w-[180px]"
+                onClick={() => setActiveTool("disease")}
+              >
+                <Search className="h-5 w-5" />
+                Disease Search
+              </Button>
+              <Button
+                variant={activeTool === "symptom" ? "default" : "outline"}
+                size="lg"
+                className="gap-2 min-w-[180px]"
+                onClick={() => setActiveTool("symptom")}
+              >
+                <UserCheck className="h-5 w-5" />
+                Symptom Checker
+              </Button>
+            </div>
           </div>
-          <div className="max-w-4xl mx-auto">
-            <DiseaseSearch />
+
+          {/* Tool Content */}
+          <div className="max-w-5xl mx-auto">
+            <Card className={activeTool === "disease" ? "overflow-visible" : "overflow-hidden"}>
+              {activeTool === "disease" ? (
+                <div className="p-6 overflow-visible">
+                  <DiseaseSearch />
+                </div>
+              ) : (
+                <SymptomChecker />
+              )}
+            </Card>
           </div>
         </div>
       </section>
